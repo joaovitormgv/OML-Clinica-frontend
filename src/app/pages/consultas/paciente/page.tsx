@@ -5,13 +5,48 @@ import Mostrador from "@/app/components/mostrador/mostrador";
 const UserSchedulePage = () => {
   // Exemplo de dados que o backend pode fornecer
   const dados = [
-    { medico: "Dr. João", paciente: "Ana Silva", data: "20/09/2024" },
-    { medico: "Dra. Maria", paciente: "Carlos Souza", data: "22/09/2024" },
-    { medico: "Dr. Pedro", paciente: "Lucas Lima", data: "23/09/2024" },
-    { medico: "Dr. Pedro", paciente: "Lucas Lima", data: "23/09/2024" },
-    { medico: "Dr. Pedro", paciente: "Lucas Lima", data: "23/09/2024" },
-    { medico: "Dr. Pedro", paciente: "Lucas Lima", data: "23/09/2024" },
-    { medico: "Dr. Pedro", paciente: "Lucas Lima", data: "23/09/2024" },
+    {
+      medico: "Dr. João",
+      paciente: "Ana Silva",
+      data: "20/09/2024",
+      horario: "14:00",
+    },
+    {
+      medico: "Dra. Maria",
+      paciente: "Carlos Souza",
+      data: "22/09/2024",
+      horario: "16:30",
+    },
+    {
+      medico: "Dr. Pedro",
+      paciente: "Lucas Lima",
+      data: "23/09/2024",
+      horario: "09:00",
+    },
+    {
+      medico: "Dr. Pedro",
+      paciente: "Lucas Lima",
+      data: "23/09/2024",
+      horario: "10:30",
+    },
+    {
+      medico: "Dr. Pedro",
+      paciente: "Lucas Lima",
+      data: "23/09/2024",
+      horario: "11:00",
+    },
+    {
+      medico: "Dr. Pedro",
+      paciente: "Lucas Lima",
+      data: "23/09/2024",
+      horario: "13:00",
+    },
+    {
+      medico: "Dr. Pedro",
+      paciente: "Lucas Lima",
+      data: "23/09/2024",
+      horario: "15:00",
+    },
   ];
 
   return (

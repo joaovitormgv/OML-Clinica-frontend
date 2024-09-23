@@ -5,6 +5,7 @@ interface MostradorProps {
     medico: string;
     paciente: string;
     data: string;
+    horario: string;
   }[];
 }
 
@@ -31,6 +32,10 @@ const Mostrador: React.FC<MostradorProps> = ({ dados }) => {
                 <div className="flex flex-col text-left">
                   <span>Data</span>
                   <span className="font-bold">{item.data}</span>
+                </div>
+                <div className="flex flex-col text-left">
+                  <span>Horário</span>
+                  <span className="font-bold">{item.horario}</span>
                 </div>
               </div>
             </div>
