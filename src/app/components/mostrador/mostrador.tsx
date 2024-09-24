@@ -42,10 +42,10 @@ const Mostrador: React.FC<MostradorProps> = ({ dados }) => {
 
             {/* Botões de Remarcar e Cancelar */}
             <div className="flex flex-col items-end space-y-2">
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+              <button className="text-black font-semibold px-2 py-1 rounded-lg hover:bg-blue-500">
                 Remarcar
               </button>
-              <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+              <button className="text-black font-semibold px-2 py-1 rounded-lg hover:bg-red-500">
                 Cancelar
               </button>
             </div>
