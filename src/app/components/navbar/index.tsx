@@ -1,10 +1,18 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import styles from "./navbar.module.css";
+import LogoutButton from "../logout/logout";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
     const pathname = usePathname();
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+    useEffect(() => {
+        const token = localStorage.getItem("userToken");
+        setIsLoggedIn(!!token);
+    }, []);
 
     return (
         <React.Fragment>
@@ -24,6 +32,16 @@ const Navbar = () => {
                     <Link href="/consulta" className={`${styles.link} ${pathname === "/consulta" ? styles.active : ""}`}>
                         Consultas
                     </Link>
+                </div>
+                <div className="ml-auto mr-8">
+                    { isLoggedIn ? (
+                    <LogoutButton/>
+                    ) : (
+                    <Link href="/pages/admin/login">
+                        Login
+                    </Link>
+                    )
+                }
                 </div>
             </div>
         </React.Fragment>
