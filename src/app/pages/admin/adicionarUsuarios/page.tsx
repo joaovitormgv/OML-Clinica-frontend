@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { use, useState, useEffect } from "react";
 
 interface FormField {
   label: string;
@@ -8,11 +8,15 @@ interface FormField {
 }
 
 const UserAdminPage = () => {
-  // Estado para armazenar o tipo de usuário selecionado e os dados do formulário
-  const [selectedUserType, setSelectedUserType] = useState<
-    "medico" | "atendente" | "paciente"
-  >("medico");
+  const [selectedUserType, setSelectedUserType] = useState<string>("paciente");
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [formData, setFormData] = useState<Record<string, string>>({});
+
+  // Estado para armazenar o tipo de usuário selecionado e os dados do formulário
+  useEffect(() => {
+    const role = localStorage.getItem("userCargo");
+    setUserRole(role);
+  }, []);
 
   // Definindo campos com base no tipo de usuário
   const userFields: Record<string, FormField[]> = {
@@ -37,7 +41,7 @@ const UserAdminPage = () => {
   // Função para enviar o formulário
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(`Cadastro de ${selectedUserType}:`, formData);
+    console.log(`Cadastro de ${selectedUserType}:`, FormData);
     // Aqui você pode adicionar a lógica de envio de dados
   };
 
@@ -49,29 +53,30 @@ const UserAdminPage = () => {
       {/* Barra de navegação para selecionar o tipo de usuário */}
       <div className="mb-8 flex space-x-8 text-lg font-semibold">
         <span
+          onClick={() => setSelectedUserType("paciente")}
+          className={`cursor-pointer ${selectedUserType === "paciente" ? "border-b-2 border-blue-600" : ""
+            }`}
+        >
+          Paciente
+        </span>
+        { userRole === "Administrador" && (
+        <>
+          <span
           onClick={() => setSelectedUserType("medico")}
-          className={`cursor-pointer ${
-            selectedUserType === "medico" ? "border-b-2 border-blue-600" : ""
-          }`}
+          className={`cursor-pointer ${selectedUserType === "medico" ? "border-b-2 border-blue-600" : ""
+            }`}
         >
           Médico
         </span>
         <span
           onClick={() => setSelectedUserType("atendente")}
-          className={`cursor-pointer ${
-            selectedUserType === "atendente" ? "border-b-2 border-blue-600" : ""
-          }`}
+          className={`cursor-pointer ${selectedUserType === "atendente" ? "border-b-2 border-blue-600" : ""
+            }`}
         >
           Atendente
         </span>
-        <span
-          onClick={() => setSelectedUserType("paciente")}
-          className={`cursor-pointer ${
-            selectedUserType === "paciente" ? "border-b-2 border-blue-600" : ""
-          }`}
-        >
-          Paciente
-        </span>
+        </>
+        )}
       </div>
 
       {/* Formulário dinâmico */}
