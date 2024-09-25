@@ -80,7 +80,7 @@ const UserAdminPage = () => {
       </div>
 
       {/* Formulário dinâmico */}
-      <div className="bg-gray-300 p-8 rounded-lg shadow-lg w-96">
+      <div className="bg-gray-300 p-8 rounded-lg shadow-lg w-96 text-black">
         <h1 className="text-2xl font-bold mb-4">
           Cadastro de{" "}
           {selectedUserType.charAt(0).toUpperCase() + selectedUserType.slice(1)}
