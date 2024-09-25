@@ -1,10 +1,17 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import styles from "./navbar.module.css";
+import LogoutButton from "../logout/logout";
 
 const Navbar = () => {
     const pathname = usePathname();
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+    useEffect(() => {
+        const token = localStorage.getItem("userToken");
+        setIsLoggedIn(!!token);
+    }, []);
 
     return (
         <React.Fragment>
@@ -18,12 +25,22 @@ const Navbar = () => {
                     <Link href="/" className={`${styles.link} ${pathname === "/" ? styles.active : ""}`}>
                         Início
                     </Link>
-                    <Link href="/cadastro" className={`${styles.link} ${pathname === "/cadastro" ? styles.active : ""}`}>
+                    <Link href="/pages/admin/adicionarUsuarios" className={`${styles.link} ${pathname === "/pages/admin/adicionarUsuarios" ? styles.active : ""}`}>
                         Cadastros
                     </Link>
-                    <Link href="/consulta" className={`${styles.link} ${pathname === "/consulta" ? styles.active : ""}`}>
+                    <Link href="/pages/consultas/autorizados" className={`${styles.link} ${pathname === "/pages/consultas/autorizados" ? styles.active : ""}`}>
                         Consultas
                     </Link>
+                </div>
+                <div className="ml-auto mr-8">
+                    { isLoggedIn ? (
+                    <LogoutButton/>
+                    ) : (
+                    <Link href="/pages/admin/login">
+                        Login
+                    </Link>
+                    )
+                }
                 </div>
             </div>
         </React.Fragment>

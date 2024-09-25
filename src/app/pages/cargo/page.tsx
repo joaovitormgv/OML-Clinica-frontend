@@ -13,15 +13,17 @@ const CargoPage = () => {
 
             <div className="relative flex flex-col items-center justify-center mt-10 gap-10">
                 <h3 className="text-2xl font-semibold">Selecione o seu cargo</h3>
-                <button className ="bg-white w-[25%] h-16 text-customBlue rounded-xl">
-                    <Link href="/auth" className="font-bold text-xl">Administrador</Link>
-                </button>
-                <button className ="bg-white w-[25%] h-16 text-customBlue rounded-xl">
-                    <Link href="/auth" className="font-bold text-xl">Atendente</Link>
-                </button>
-                <button className ="bg-white w-[25%] h-16 text-customBlue rounded-xl">
-                    <Link href="/auth/paciente" className="font-bold text-xl">Paciente</Link>
-                </button>
+                <Link href="/pages/admin/login" className="w-[25%]">
+                    <button className="bg-white w-full h-16 text-customBlue rounded-xl font-bold text-xl hover:bg-customBlue hover:text-white">
+                        Administrador ou Atendente
+                    </button>
+                </Link>
+                <Link href="/pages/login/paciente" className="w-[25%]">
+                    <button className="bg-white w-full h-16 text-customBlue rounded-xl font-bold text-xl hover:bg-customBlue hover:text-white">
+                        Paciente
+                    </button>
+                </Link>
+                
             </div>
         </div>
     )
