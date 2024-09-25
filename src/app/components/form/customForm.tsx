@@ -1,25 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 
-interface FormField {
-  label: string;
-  name: string;
-  type: string;
-}
-
-interface CustomFormProps {
+interface CustomFormProps<T> {
   title: string;
-  fields: FormField[];
+  fields: { label: string; name: string; type: string }[];
   buttonText: string;
-  onSubmit: (formData: Record<string, string>) => void;
+  onSubmit: (formData: T) => Promise<void>;
 }
 
-const CustomForm: React.FC<CustomFormProps> = ({
-  title,
-  fields,
-  buttonText,
-  onSubmit,
-}) => {
-  const [formData, setFormData] = React.useState<Record<string, string>>({});
+const CustomForm = <T,>({ title, fields, buttonText, onSubmit }: CustomFormProps<T>) => {
+  const [formData, setFormData] = useState<T>({} as T);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -33,7 +22,6 @@ const CustomForm: React.FC<CustomFormProps> = ({
 
   return (
     <div className="w-full flex">
-      {/* Formulário */}
       <div className="w-full h-auto p-8">
         <h2 className="text-2xl font-bold mb-4 flex justify-center">{title}</h2>
         <form
@@ -52,7 +40,7 @@ const CustomForm: React.FC<CustomFormProps> = ({
                 id={field.name}
                 name={field.name}
                 type={field.type}
-                value={formData[field.name] || ""}
+                value={(formData as any)[field.name] || ""}
                 onChange={handleInputChange}
                 className="px-4 py-2 border-2 border-blue-700 rounded-lg focus:outline-none focus:border-blue-600 w-60"
               />
