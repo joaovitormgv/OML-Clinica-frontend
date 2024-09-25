@@ -52,7 +52,7 @@ const UserSchedulePage = () => {
   return (
     <div className="w-full flex flex-row h-screen">
       <div className="w-1/5 bg-gray-200 h-screen">
-        <div id="leftside-content" className="flex flex-col mt-10">
+        <div id="leftside-content" className="flex flex-col mt-10 text-black">
           <p className="flex items-center justify-center font-bold text-xl">
             Filtros
           </p>

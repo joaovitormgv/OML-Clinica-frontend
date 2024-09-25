@@ -20,7 +20,7 @@ const Mostrador: React.FC<MostradorProps> = ({ dados }) => {
           >
             {/* Informações de Médico, Paciente, e Data */}
             <div className="flex flex-col space-x-4">
-              <div className="flex space-x-8">
+              <div className="flex text-black space-x-8">
                 <div className="flex flex-col text-left">
                   <span>Médico</span>
                   <span className="text-gray-600">{item.medico}</span>
