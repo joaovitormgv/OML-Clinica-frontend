@@ -26,7 +26,7 @@ const Navbar = () => {
                     <Link href="/" className={`${styles.link} ${pathname === "/" ? styles.active : ""}`}>
                         Início
                     </Link>
-                    <Link href="/cadastro" className={`${styles.link} ${pathname === "/cadastro" ? styles.active : ""}`}>
+                    <Link href="/pages/admin/adicionarUsuarios" className={`${styles.link} ${pathname === "/pages/admin/adicionarUsuarios" ? styles.active : ""}`}>
                         Cadastros
                     </Link>
                     <Link href="/consulta" className={`${styles.link} ${pathname === "/consulta" ? styles.active : ""}`}>
