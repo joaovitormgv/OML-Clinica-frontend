@@ -57,7 +57,7 @@ const AdminSchedulePage = () => {
 
       {/* Menu para adicionar nova consulta */}
       {showNewConsultationMenu && (
-        <div className="w-4/5 bg-gray-100 p-4 rounded-lg mt-4">
+        <div className="w-4/5 bg-gray-100 p-4 rounded-lg mt-4 text-black">
           <h2 className="text-lg font-semibold mb-4">
             Adicionar Nova Consulta
           </h2>
@@ -115,7 +115,7 @@ const AdminSchedulePage = () => {
       )}
 
       {/* Mostrador das consultas, 2 por linha */}
-      <div className="w-4/5 grid grid-cols-2 gap-4 mt-6 mb-6">
+      <div className="w-4/5 grid grid-cols-2 gap-4 mt-6 mb-6 text-black">
         {consultations.map((consultation, index) => (
           <div key={index} className="bg-gray-300 p-4 rounded-lg">
             <p className="font-semibold">Médico: {consultation.medico}</p>
