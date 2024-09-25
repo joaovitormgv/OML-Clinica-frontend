@@ -1,24 +1,86 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Mostrador from "@/app/components/mostrador/mostrador";
-
 // Exemplo de dados de consultas
 const initialAppointments = [
-  { day: 20, doctor: "Dr. João", patient: "Ana Silva", time: "14:00" },
-  { day: 22, doctor: "Dra. Maria", patient: "Carlos Souza", time: "10:00" },
-  { day: 23, doctor: "Dr. Pedro", patient: "Lucas Lima", time: "11:30" },
-  { day: 23, doctor: "Dr. Pedro", patient: "Bruna Carvalho", time: "15:00" },
-  { day: 25, doctor: "Dra. Maria", patient: "Lucas Lima", time: "09:00" },
+  {
+    day: 20,
+    month: 9,
+    year: 2024,
+    doctor: "Dr. João",
+    patient: "Ana Silva",
+    time: "14:00",
+  },
+  {
+    day: 22,
+    month: 9,
+    year: 2024,
+    doctor: "Dra. Maria",
+    patient: "Carlos Souza",
+    time: "10:00",
+  },
+  {
+    day: 23,
+    month: 9,
+    year: 2024,
+    doctor: "Dr. Pedro",
+    patient: "Lucas Lima",
+    time: "11:30",
+  },
+  {
+    day: 23,
+    month: 9,
+    year: 2024,
+    doctor: "Dr. Pedro",
+    patient: "Bruna Carvalho",
+    time: "15:00",
+  },
+  {
+    day: 25,
+    month: 9,
+    year: 2024,
+    doctor: "Dra. Maria",
+    patient: "Lucas Lima",
+    time: "09:00",
+  },
 ];
 
 const AdminCalendarPage = () => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [appointments, setAppointments] = useState(initialAppointments);
-  const [showNewAppointmentForm, setShowNewAppointmentForm] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth()); // Mês atual
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear()); // Ano atual
+
+  const popupRef = useRef<HTMLDivElement | null>(null);
+
+  const months = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ];
+
+  // Função para calcular o número de dias no mês atual
+  const getDaysInMonth = (month: number, year: number) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
 
   // Função para contar o número de agendamentos por dia
   const getAppointmentCount = (day: number) => {
-    return appointments.filter((app) => app.day === day).length;
+    return appointments.filter(
+      (app) =>
+        app.day === day &&
+        app.month === currentMonth + 1 &&
+        app.year === currentYear
+    ).length;
   };
 
   // Função para verificar se ainda há horários disponíveis
@@ -27,97 +89,150 @@ const AdminCalendarPage = () => {
     return count < 5; // Considera até 5 consultas por dia como disponíveis
   };
 
-  // Função para adicionar nova consulta
-  const addAppointment = (doctor: string, patient: string, time: string) => {
-    if (selectedDay) {
-      setAppointments([
-        ...appointments,
-        { day: selectedDay, doctor, patient, time },
-      ]);
-      setShowNewAppointmentForm(false); // Fecha o formulário após agendar
+  // Navegação entre meses
+  const nextMonth = () => {
+    if (currentMonth === 11) {
+      setCurrentMonth(0);
+      setCurrentYear(currentYear + 1);
+    } else {
+      setCurrentMonth(currentMonth + 1);
     }
+    setSelectedDay(null); // Reseta o dia selecionado ao trocar de mês
   };
 
+  const prevMonth = () => {
+    if (currentMonth === 0) {
+      setCurrentMonth(11);
+      setCurrentYear(currentYear - 1);
+    } else {
+      setCurrentMonth(currentMonth - 1);
+    }
+    setSelectedDay(null); // Reseta o dia selecionado ao trocar de mês
+  };
+
+  // Fechar o pop-up e voltar ao calendário
+  const closePopup = () => {
+    setSelectedDay(null);
+  };
+
+  // Fechar o popup ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node)
+      ) {
+        closePopup();
+      }
+    };
+
+    if (selectedDay) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [selectedDay]);
+
   return (
-    <div className="w-full h-screen flex flex-col items-center">
-      {/* Calendário ocupando a tela toda */}
-      <div className="grid grid-cols-7 w-full max-w-5xl mt-10">
-        {Array.from({ length: 30 }, (_, index) => {
-          const day = index + 1;
-          return (
-            <div
-              key={day}
-              className={`p-4 border border-black text-left cursor-pointer ${
-                selectedDay === day ? "bg-blue-100" : "bg-white"
-              }`}
-              onClick={() => setSelectedDay(day)}
-            >
-              <p className="font-bold text-left text-xl">{day}</p>
-              <p className="text-sm mt-2 font-semibold">
-                {getAppointmentCount(day)} agendamentos
-              </p>
-              <p
-                className={`${
-                  isAvailable(day) ? "text-green-500" : "text-red-500"
-                } text-sm`}
-              >
-                {isAvailable(day) ? "Disponível" : "Indisponível"}
-              </p>
-            </div>
-          );
-        })}
+    <div className="w-full h-screen flex flex-col items-center relative">
+      {/* Calendário e navegação de meses */}
+      <div
+        className={`w-full h-full flex flex-col items-center ${
+          selectedDay ? "opacity-50" : ""
+        }`}
+      >
+        <div className="flex justify-between w-full max-w-5xl mt-10 mb-4">
+          <button
+            onClick={prevMonth}
+            className="bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-600"
+          >
+            Mês Anterior
+          </button>
+          <h2 className="text-2xl font-bold">{`${months[currentMonth]} ${currentYear}`}</h2>
+          <button
+            onClick={nextMonth}
+            className="bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-600"
+          >
+            Próximo Mês
+          </button>
+        </div>
+
+        {/* Calendário */}
+        <div className="grid grid-cols-7 w-full max-w-5xl">
+          {Array.from(
+            { length: getDaysInMonth(currentMonth, currentYear) },
+            (_, index) => {
+              const day = index + 1;
+              return (
+                <div
+                  key={day}
+                  className={`p-4 border border-black text-left cursor-pointer ${
+                    selectedDay === day ? "bg-blue-100" : "bg-white"
+                  }`}
+                  onClick={() => setSelectedDay(day)}
+                >
+                  <p className="font-bold text-left text-xl">{day}</p>
+                  <p className="text-sm mt-2 font-semibold">
+                    {getAppointmentCount(day)} agendamentos
+                  </p>
+                  <p
+                    className={`${
+                      isAvailable(day) ? "text-green-500" : "text-red-500"
+                    } text-sm`}
+                  >
+                    {isAvailable(day) ? "Disponível" : "Indisponível"}
+                  </p>
+                </div>
+              );
+            }
+          )}
+        </div>
       </div>
 
-      {/* Sidebar abaixo do calendário */}
+      {/* Pop-up de consultas */}
       {selectedDay && (
-        <div className="w-full max-w-5xl h-auto mt-6 p-4">
+        <div
+          ref={popupRef}
+          className="fixed top-1/4 left-1/5 w-3/5 bg-white border border-gray-300 rounded-lg shadow-lg p-6"
+          style={{ zIndex: 100 }}
+        >
           <button
-            onClick={() => setShowNewAppointmentForm(true)}
-            className="bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-600 mb-4"
+            onClick={closePopup}
+            className="absolute top-4 right-4 hover:text-gray-800 text-2xl font-semibold"
           >
-            Agendar nova consulta
+            X
           </button>
+          <h2 className="text-2xl font-bold mb-4">
+            Consultas do dia {selectedDay} de {months[currentMonth]}{" "}
+            {currentYear}
+          </h2>
 
-          {/* Formulário para adicionar consulta */}
-          {showNewAppointmentForm && (
-            <div className="flex flex-col mb-4">
-              <input
-                type="text"
-                placeholder="Nome do Médico"
-                className="px-2 py-2 border-2 border-blue-700 rounded-lg mb-2"
-              />
-              <input
-                type="text"
-                placeholder="Nome do Paciente"
-                className="px-2 py-2 border-2 border-blue-700 rounded-lg mb-2"
-              />
-              <input
-                type="time"
-                className="px-2 py-2 border-2 border-blue-700 rounded-lg mb-2"
-              />
-              <button
-                onClick={() =>
-                  addAppointment("Nome do Médico", "Nome do Paciente", "14:00")
-                }
-                className="bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-600"
-              >
-                Confirmar
-              </button>
-            </div>
-          )}
-
-          {/* Consultas do dia com limite de altura e rolagem */}
-          <div className="max-h-60 overflow-y-auto mb-10">
+          {/* Consultas do dia */}
+          <div className="max-h-60 overflow-y-auto">
             <Mostrador
               dados={appointments
-                .filter((app) => app.day === selectedDay)
+                .filter(
+                  (app) =>
+                    app.day === selectedDay &&
+                    app.month === currentMonth + 1 &&
+                    app.year === currentYear
+                )
                 .map((app) => ({
                   medico: app.doctor,
                   paciente: app.patient,
-                  data: `${app.day}/09/2024`, // Ajuste conforme necessário para exibir o mês/ano corretamente
+                  data: `${app.day}/${app.month}/${app.year}`,
                   horario: app.time,
                 }))}
             />
+
+            {/* Mensagem caso não haja consultas */}
+            {getAppointmentCount(selectedDay) === 0 && (
+              <p className="text-center text-gray-500">
+                Nenhuma consulta agendada para este dia.
+              </p>
+            )}
           </div>
         </div>
       )}
