@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import CustomForm from "@/app/components/form/customForm";
-import LogoutButton from "@/app/components/logout/logout";
 
 const AdminLoginPage = () => {
   // Função que será chamada ao submeter o formulário
