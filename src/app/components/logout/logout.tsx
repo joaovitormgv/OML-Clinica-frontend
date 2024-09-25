@@ -3,6 +3,7 @@ import React from "react";
 const LogoutButton: React.FC = () => {
   const handleLogout = () => {
     localStorage.removeItem('userToken');
+    localStorage.removeItem('userCargo');
     console.log("Logout successful");
   };
 

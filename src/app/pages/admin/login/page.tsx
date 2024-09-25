@@ -1,8 +1,12 @@
 "use client";
 import React from "react";
 import CustomForm from "@/app/components/form/customForm";
+import { useRouter } from "next/navigation";
+
 
 const AdminLoginPage = () => {
+  const router = useRouter();
+
   // Função que será chamada ao submeter o formulário
   const handleLoginSubmit = async (formData: { email: string; nome: string }) => {
     console.log("handleLoginSubmit called with:", formData);
@@ -23,7 +27,9 @@ const AdminLoginPage = () => {
       if (response.ok) {
         // Handle successful login
         localStorage.setItem('userToken', data.id);
+        localStorage.setItem('userCargo', data.cargo);
         console.log("Login successful");
+        router.push('/pages/admin/adicionarUsuarios');
       } else {
         // Handle login error
         console.error("Login failed:", data);
