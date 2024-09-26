@@ -1,52 +1,38 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import Mostrador from "@/app/components/mostrador/mostrador";
+import { toast, ToastContainer } from "react-toastify";
 // Exemplo de dados de consultas
-const initialAppointments = [
-  {
-    day: 20,
-    month: 9,
-    year: 2024,
-    doctor: "Dr. João",
-    patient: "Ana Silva",
-    time: "14:00",
-  },
-  {
-    day: 22,
-    month: 9,
-    year: 2024,
-    doctor: "Dra. Maria",
-    patient: "Carlos Souza",
-    time: "10:00",
-  },
-  {
-    day: 23,
-    month: 9,
-    year: 2024,
-    doctor: "Dr. Pedro",
-    patient: "Lucas Lima",
-    time: "11:30",
-  },
-  {
-    day: 23,
-    month: 9,
-    year: 2024,
-    doctor: "Dr. Pedro",
-    patient: "Bruna Carvalho",
-    time: "15:00",
-  },
-  {
-    day: 25,
-    month: 9,
-    year: 2024,
-    doctor: "Dra. Maria",
-    patient: "Lucas Lima",
-    time: "09:00",
-  },
-];
+  interface NewConsultationData {
+    id: number;
+    paciente: {
+      [x: string]: any; id: number 
+};
+    medico: {
+      [x: string]: any; id: number 
+};
+    data: string;
+    horario: string;
+    dataHora: string;
+    status: string;
+  }
+
+interface Consulta {
+  id: number;
+  day: number;
+  month: number;
+  year: number;
+  doctor: string;
+  patient: string;
+  time: string;
+}
+
+const initialAppointments: Consulta[] = [];
 
 const AdminCalendarPage = () => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [myConsultas, setMyConsultas] = useState<NewConsultationData[]>([]);
+  const [todasConsultas, setTodasConsultas] = useState<NewConsultationData[]>([]);
   const [appointments, setAppointments] = useState(initialAppointments);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth()); // Mês atual
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear()); // Ano atual
@@ -67,6 +53,71 @@ const AdminCalendarPage = () => {
     "Novembro",
     "Dezembro",
   ];
+
+  useEffect(() => {
+    const serializedAppointments = myConsultas.map((consulta) => {
+      const data = new Date(consulta.dataHora);
+      const formattedDate = data.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
+      const formattedTime = data.toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+      const [day, month, year] = formattedDate.split("/").map(Number);
+      const time = formattedTime;
+      return {
+        id: consulta.id,
+        day,
+        month,
+        year,
+        doctor: consulta.medico.nome, // Assuming you want to use the doctor's ID
+        patient: consulta.paciente.nome, // Assuming you want to use the patient's ID
+        time,
+      };
+    });
+    setAppointments(serializedAppointments);
+  }, [myConsultas]);
+
+  useEffect(() => {
+    const fetchConsultasUsuario = async () => {
+      try {
+        const userId = localStorage.getItem("userToken");
+        const response = await fetch(`http://localhost:8080/consultas/paciente/${userId}`);
+        const data = await response.json();
+        setMyConsultas(data);
+        console.log("Consultas do usuário:", data);
+      } catch (error) {
+        console.error("Erro ao buscar consultas do usuário:", error);
+      }
+    };
+
+    fetchConsultasUsuario();
+  }, []);
+  
+    const handleCancelConsulta = async (consultaId: number) => {
+      try {
+        const confirm = window.confirm("Tem certeza que deseja cancelar esta consulta?");
+        if (!confirm) {
+          return;
+        }
+
+        const response = await fetch(`http://localhost:8080/consultas/${consultaId}`, {
+          method: 'DELETE',
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        // Atualize a lista de consultas após a exclusão
+        setMyConsultas((prevConsultas: NewConsultationData[]) => prevConsultas.filter((consulta: NewConsultationData) => consulta.id !== consultaId));
+        alert("Consulta cancelada com sucesso");
+      } catch (error) {
+        console.error("Erro ao cancelar consulta:", error);
+        toast.error("Erro ao cancelar consulta");
+      }
+    };
 
   // Função para calcular o número de dias no mês atual
   const getDaysInMonth = (month: number, year: number) => {
@@ -174,8 +225,12 @@ const AdminCalendarPage = () => {
                   onClick={() => setSelectedDay(day)}
                 >
                   <p className="font-bold text-left text-xl">{day}</p>
-                  <p className="text-sm mt-2 font-semibold">
-                    {getAppointmentCount(day)} agendamentos
+                  <p className={`text-sm mt-2 font-semibold rounded ${
+                    getAppointmentCount(day) > 0 ? "bg-blue-500 text-white pl-1" : ""
+                  } 
+                  `}
+                  >
+                   { getAppointmentCount(day) !== 1 ? `${getAppointmentCount(day)} consultas` : `${getAppointmentCount(day)} consulta`}
                   </p>
                   <p
                     className={`${
@@ -212,6 +267,7 @@ const AdminCalendarPage = () => {
           {/* Consultas do dia */}
           <div className="max-h-60 overflow-y-auto">
             <Mostrador
+              onCancel={handleCancelConsulta}
               dados={appointments
                 .filter(
                   (app) =>
@@ -220,6 +276,7 @@ const AdminCalendarPage = () => {
                     app.year === currentYear
                 )
                 .map((app) => ({
+                  id: app.id,
                   medico: app.doctor,
                   paciente: app.patient,
                   data: `${app.day}/${app.month}/${app.year}`,

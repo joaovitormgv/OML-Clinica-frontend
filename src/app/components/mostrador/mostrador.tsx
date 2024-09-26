@@ -2,14 +2,16 @@ import React from "react";
 
 interface MostradorProps {
   dados: {
+    id: number;
     medico: string;
     paciente: string;
     data: string;
     horario: string;
   }[];
+  onCancel: (index: number) => void;
 }
 
-const Mostrador: React.FC<MostradorProps> = ({ dados }) => {
+const Mostrador: React.FC<MostradorProps> = ({ dados, onCancel }) => {
   return (
     <div className="h-screen overflow-y-auto">
       <div className="flex flex-col space-y-4 p-4">
@@ -45,7 +47,10 @@ const Mostrador: React.FC<MostradorProps> = ({ dados }) => {
               <button className="text-black font-semibold px-2 py-1 rounded-lg hover:bg-blue-500">
                 Remarcar
               </button>
-              <button className="text-black font-semibold px-2 py-1 rounded-lg hover:bg-red-500">
+              <button 
+              className="text-black font-semibold px-2 py-1 rounded-lg hover:bg-red-500"
+              onClick={() => onCancel(item.id)}
+              >
                 Cancelar
               </button>
             </div>
