@@ -1,5 +1,7 @@
 "use client";
 import React, { use, useState, useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface FormField {
   label: string;
@@ -20,13 +22,19 @@ const UserAdminPage = () => {
 
   // Definindo campos com base no tipo de usuário
   const userFields: Record<string, FormField[]> = {
-    medico: [{ label: "Nome", name: "nome", type: "text" }],
+    medico: [
+      { label: "Nome", name: "nome", type: "text" },
+      { label: "Especialidade", name: "especialidade", type: "text" },
+      { label: "E-mail", name: "email", type: "text" },
+      { label: "CPF", name: "cpf", type: "text" },
+    ],
     atendente: [
       { label: "Nome", name: "nome", type: "text" },
       { label: "Email", name: "email", type: "email" },
-      { label: "Senha", name: "senha", type: "password" },
     ],
     paciente: [
+      { label: "Nome", name: "nome", type: "text" },
+      { label: "E-mail", name: "email", type: "text" },
       { label: "CPF", name: "cpf", type: "text" },
       { label: "Data de Nascimento", name: "dataNascimento", type: "date" },
     ],
@@ -39,14 +47,129 @@ const UserAdminPage = () => {
   };
 
   // Função para enviar o formulário
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(`Cadastro de ${selectedUserType}:`, FormData);
     // Aqui você pode adicionar a lógica de envio de dados
+    switch (selectedUserType) {
+      case "paciente":
+        if (!formData.nome || !formData.email || !formData.cpf || !formData.dataNascimento) {
+          console.error("Campos obrigatórios não preenchidos");
+          return;
+        }
+        
+        try {
+          console.log("handleRegisterSubmit called with:", formData);
+
+          const response = await fetch('http://localhost:8080/pacientes', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          });
+
+          console.log("HTTP status:", response.status);
+          const data = await response.json();
+          console.log("Response data:", data);
+
+          if (response.ok) {
+            // Handle successful registration
+            setFormData({});
+            toast.success("Cadastro realizado com sucesso");
+            console.log("Registration successful");
+          } else {
+            // Handle registration error
+            console.error("Registration failed:", data);
+            throw new Error("Registration failed");
+          }
+        } catch (error) {
+          toast.error("Erro ao realizar cadastro");
+          console.error("Error during registration:", error);
+        }
+        break;
+
+      case "medico":
+        if (!formData.nome || !formData.email || !formData.cpf || !formData.especialidade) {
+          console.error("Campos obrigatórios não preenchidos");
+          return;
+        }
+        
+        try {
+          console.log("handleRegisterSubmit called with:", formData);
+
+          const response = await fetch('http://localhost:8080/medicos', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          });
+
+          console.log("HTTP status:", response.status);
+          const data = await response.json();
+          console.log("Response data:", data);
+
+          if (response.ok) {
+            // Handle successful registration
+            setFormData({});
+            toast.success("Cadastro realizado com sucesso");
+            console.log("Registration successful");
+          } else {
+            // Handle registration error
+            console.error("Registration failed:", data);
+            throw new Error("Registration failed");
+          }
+        } catch (error) {
+          toast.error("Erro ao realizar cadastro");
+          console.error("Error during registration:", error);
+        }
+        break;
+      
+      case "atendente":
+        formData.cargo = "Atendente";
+
+        if (!formData.nome || !formData.email || !formData.cargo) {
+          console.error("Campos obrigatórios não preenchidos");
+          return;
+        }
+
+        try {
+          console.log("handleRegisterSubmit called with:", formData);
+
+          const response = await fetch('http://localhost:8080/usuarios', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          });
+
+          console.log("HTTP status:", response.status);
+          const data = await response.json();
+          console.log("Response data:", data);
+
+          if (response.ok) {
+            // Handle successful registration
+            setFormData({});
+            toast.success("Cadastro realizado com sucesso");
+            console.log("Registration successful");
+          } else {
+            // Handle registration error
+            console.error("Registration failed:", data);
+            throw new Error("Registration failed");
+          }
+        } catch (error) {
+          toast.error("Erro ao realizar cadastro");
+          console.error("Error during registration:", error);
+        }
+
+      }
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center">
+      <ToastContainer />
       <p className="text-center font-bold text-3xl mb-8 mt-10">
         Cadastro de Usuários
       </p>
