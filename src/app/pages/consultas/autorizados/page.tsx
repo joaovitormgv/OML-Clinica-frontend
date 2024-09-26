@@ -6,26 +6,11 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { debounce } from "lodash";
 
-// Dados de exemplo para consultas
-const consultations = [
-  {
-    medico: "Dr. João",
-    paciente: "Ana Silva",
-    data: "2024-10-05",
-    horario: "14:00",
-  },
-  {
-    medico: "Dra. Maria",
-    paciente: "José Santos",
-    data: "2024-10-06",
-    horario: "16:00",
-  },
 
-  // Adicione mais dados aqui
-];
 
 const AdminSchedulePage = () => {
   interface Consulta {
+    id: any;
     paciente: { id: number };
     medico: { id: number };
     data: string;
@@ -58,6 +43,7 @@ const AdminSchedulePage = () => {
 
   const [showNewConsultationMenu, setShowNewConsultationMenu] = useState(false);
   const [newConsultationData, setNewConsultationData] = useState({
+    id: 0,
     paciente: { id: 0 },
     medico: { id: 0 },
     data: "",
@@ -205,7 +191,9 @@ const AdminSchedulePage = () => {
       
       // Exibir mensagem de sucesso
       toast.success(`Consulta de ${pacientes.find(paciente => paciente.id === newConsultationData.paciente.id)?.nome} agendada com sucesso!`);
+      setConsultas ((prevConsultas) => [...prevConsultas, newConsultationData]);
       setNewConsultationData({
+        id: 0,
         paciente: { id: 0 },
         medico: { id: 0 },
         data: "",
@@ -329,7 +317,32 @@ const AdminSchedulePage = () => {
                 <button className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-400">
                   Remarcar
                 </button>
-                <button className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500">
+                <button 
+                className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500"
+                onClick={async () => {
+                  // tem certeza que deseja cancelar a consulta?
+                  const confirm = window.confirm("Tem certeza que deseja cancelar a consulta?");
+                  if (!confirm) return;
+
+                  try {
+                    const response = await fetch(`http://localhost:8080/consultas/${consultation.id}`, {
+                      method: "DELETE",
+                    });
+                    console.log("HTTP status:", response.status);
+                    if (response.ok) {
+                      toast.success("Consulta cancelada com sucesso");
+                        setConsultas((prevConsultas) => {
+                          const updatedConsultas = prevConsultas.filter((c) => c.dataHora !== consultation.dataHora);
+                          return updatedConsultas;
+                        });
+                    } else {
+                      toast.error("Erro ao cancelar consulta");
+                    }
+                  } catch (error) {
+                    console.error("Erro ao cancelar consulta:", error);
+                  }
+                }}
+                >
                   Cancelar
                 </button>
               </div>
