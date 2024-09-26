@@ -27,7 +27,7 @@ const UserLoginPage = () => {
         // Handle successful login
         toast.success("Login efetuado com sucesso");
         localStorage.setItem('userToken', data.id);
-        localStorage.setItem('userCargo', data.cargo);
+        localStorage.setItem('userCargo', 'paciente');
         console.log("Login successful");
         setTimeout(() => {
           router.push('/pages/consultas/autorizados/calendario');

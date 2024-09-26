@@ -4,7 +4,6 @@ import CustomForm from "@/app/components/form/customForm";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { th } from "date-fns/locale";
 
 
 const AdminLoginPage = () => {

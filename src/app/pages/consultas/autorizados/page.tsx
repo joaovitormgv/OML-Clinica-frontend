@@ -6,26 +6,11 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { debounce } from "lodash";
 
-// Dados de exemplo para consultas
-const consultations = [
-  {
-    medico: "Dr. João",
-    paciente: "Ana Silva",
-    data: "2024-10-05",
-    horario: "14:00",
-  },
-  {
-    medico: "Dra. Maria",
-    paciente: "José Santos",
-    data: "2024-10-06",
-    horario: "16:00",
-  },
 
-  // Adicione mais dados aqui
-];
 
 const AdminSchedulePage = () => {
   interface Consulta {
+    id: any;
     paciente: { id: number };
     medico: { id: number };
     data: string;
@@ -58,6 +43,7 @@ const AdminSchedulePage = () => {
 
   const [showNewConsultationMenu, setShowNewConsultationMenu] = useState(false);
   const [newConsultationData, setNewConsultationData] = useState({
+    id: 0,
     paciente: { id: 0 },
     medico: { id: 0 },
     data: "",
@@ -207,6 +193,7 @@ const AdminSchedulePage = () => {
       toast.success(`Consulta de ${pacientes.find(paciente => paciente.id === newConsultationData.paciente.id)?.nome} agendada com sucesso!`);
       setConsultas ((prevConsultas) => [...prevConsultas, newConsultationData]);
       setNewConsultationData({
+        id: 0,
         paciente: { id: 0 },
         medico: { id: 0 },
         data: "",

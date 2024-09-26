@@ -7,11 +7,18 @@ import LogoutButton from "../logout/logout";
 const Navbar = () => {
     const pathname = usePathname();
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [cargo, setCargo] = useState<string>("");
 
     useEffect(() => {
         const token = localStorage.getItem("userToken");
         setIsLoggedIn(!!token);
     }, []);
+
+    useEffect(() => {
+        const userCargo = localStorage.getItem("userCargo");
+        setCargo(userCargo || "");
+    }, []);
+
 
     return (
         <React.Fragment>
@@ -25,12 +32,14 @@ const Navbar = () => {
                     <Link href="/pages/cargo" className={`${styles.link} ${pathname === "/pages/cargo" ? styles.active : ""}`}>
                         Início
                     </Link>
-                    <Link href="/pages/admin/adicionarUsuarios" className={`${styles.link} ${pathname === "/pages/admin/adicionarUsuarios" ? styles.active : ""}`}>
-                        Cadastros
-                    </Link>
-                    <Link href="/pages/consultas/autorizados" className={`${styles.link} ${pathname === "/pages/consultas/autorizados" ? styles.active : ""}`}>
-                        Consultas
-                    </Link>
+                    { cargo !== "paciente" && (
+                        <><Link href="/pages/admin/adicionarUsuarios" className={`${styles.link} ${pathname === "/pages/admin/adicionarUsuarios" ? styles.active : ""}`}>
+                            Cadastros
+                        </Link><Link href="/pages/consultas/autorizados" className={`${styles.link} ${pathname === "/pages/consultas/autorizados" ? styles.active : ""}`}>
+                                Consultas
+                            </Link></>
+                        )
+                    }
                 </div>
                 <div className="ml-auto mr-8">
                     { isLoggedIn ? (
