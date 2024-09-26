@@ -2,6 +2,9 @@
 import React from "react";
 import CustomForm from "@/app/components/form/customForm";
 import { useRouter } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { th } from "date-fns/locale";
 
 
 const AdminLoginPage = () => {
@@ -31,8 +34,10 @@ const AdminLoginPage = () => {
         console.log("Login successful");
         router.push('/pages/admin/adicionarUsuarios');
       } else {
+        toast.error("Erro ao fazer login: Usuário inválido");
         // Handle login error
         console.error("Login failed:", data);
+        throw new Error("Login failed");
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -41,6 +46,7 @@ const AdminLoginPage = () => {
 
   return (
     <div className="bg-[url('/assets/fundo.jpg')] bg-cover bg-center min-h-screen flex justify-center items-center">
+      <ToastContainer />
       {/* Overlay */}
       <div className="absolute inset-0 bg-customBlue opacity-60"></div>
 

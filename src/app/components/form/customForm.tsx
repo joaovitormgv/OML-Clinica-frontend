@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React, { useState } from "react";
 
 interface CustomFormProps<T> {
@@ -46,6 +47,16 @@ const CustomForm = <T,>({ title, fields, buttonText, onSubmit }: CustomFormProps
               />
             </div>
           ))}
+          { title !== "Cadastro" && (
+            <Link 
+            href="/pages/admin/cadastro"
+            className="text-blue-500"
+            >
+                Não tem cadastro? Clique aqui
+            </Link>
+            )
+          }
+          
           <button
             type="submit"
             className="mt-4 bg-blue-500 text-white font-semibold px-6 py-2 rounded-lg hover:bg-blue-600"

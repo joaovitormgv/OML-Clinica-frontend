@@ -22,7 +22,7 @@ const Navbar = () => {
                 </div>
 
                 <div className="flex row items-center gap-5">
-                    <Link href="/" className={`${styles.link} ${pathname === "/" ? styles.active : ""}`}>
+                    <Link href="/pages/cargo" className={`${styles.link} ${pathname === "/pages/cargo" ? styles.active : ""}`}>
                         Início
                     </Link>
                     <Link href="/pages/admin/adicionarUsuarios" className={`${styles.link} ${pathname === "/pages/admin/adicionarUsuarios" ? styles.active : ""}`}>

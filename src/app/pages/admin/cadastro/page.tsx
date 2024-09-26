@@ -1,16 +1,54 @@
 "use client";
 import React from "react";
 import CustomForm from "@/app/components/form/customForm";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
 
 const AdminRegisterPage = () => {
+  const router = useRouter();
   // Função que será chamada ao submeter o formulário
-  const handleLoginSubmit = (formData: Record<string, string>) => {
-    console.log("Login data:", formData);
-    // Aqui você pode lidar com o envio dos dados de login
+  const handleRegisterSubmit = async (formData: Record<string, string>): Promise<void> => {
+    if (!formData.nome || !formData.email || !formData.cargo) {
+      console.error("Missing required fields");
+      return;
+    }
+
+    try {
+      console.log("handleRegisterSubmit called with:", formData);
+
+      const response = await fetch('http://localhost:8080/usuarios', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      console.log("HTTP status:", response.status);
+      const data = await response.json();
+      console.log("Response data:", data);
+
+      if (response.ok) {
+        // Handle successful registration
+        toast.success("Cadastro realizado com sucesso");
+        console.log("Registration successful");
+        setTimeout(() => {
+          router.push('/pages/admin/login');
+        }, 2000); // Espera 2 segundos antes de redirecionar
+      } else {
+        // Handle registration error
+        console.error("Registration failed:", data);
+        throw new Error("Registration failed");
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+    }
   };
 
   return (
     <div className="bg-[url('/assets/fundo.jpg')] bg-cover bg-center min-h-screen flex justify-center items-center">
+      <ToastContainer />
       {/* Overlay */}
       <div className="absolute inset-0 bg-customBlue opacity-60"></div>
 
@@ -28,12 +66,12 @@ const AdminRegisterPage = () => {
           <CustomForm
             title="Cadastro"
             fields={[
-              { label: "Nome", name: "name", type: "text" },
+              { label: "Nome", name: "nome", type: "text" },
               { label: "Email", name: "email", type: "text" },
-              { label: "Senha", name: "password", type: "password" },
+              { label: "Cargo", name: "cargo", type: "text" },
             ]}
             buttonText="Cadastrar"
-            onSubmit={handleLoginSubmit}
+            onSubmit={handleRegisterSubmit}
           />
         </div>
       </div>
