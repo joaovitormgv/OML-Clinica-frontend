@@ -17,7 +17,7 @@ const Navbar = () => {
         <React.Fragment>
             <div className="flex items-center w-full h-20 bg-customBlue text-White">
                 <div className="flex justify-start items-center h-full ml-8 mr-8 pr-4">
-                    <h2 className="text-2xl font-bold">OML</h2>
+                    <h2 className="text-2xl font-bold text-white">OML</h2>
                     <div className="ml-8 border-r border-white h-12 my-auto"></div>
                 </div>
 
