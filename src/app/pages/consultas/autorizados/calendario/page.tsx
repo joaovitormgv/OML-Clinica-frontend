@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Mostrador from "@/app/components/mostrador/mostrador";
 import { toast, ToastContainer } from "react-toastify";
 // Exemplo de dados de consultas
@@ -32,7 +33,6 @@ const initialAppointments: Consulta[] = [];
 const AdminCalendarPage = () => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [myConsultas, setMyConsultas] = useState<NewConsultationData[]>([]);
-  const [todasConsultas, setTodasConsultas] = useState<NewConsultationData[]>([]);
   const [appointments, setAppointments] = useState(initialAppointments);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth()); // Mês atual
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear()); // Ano atual
@@ -73,8 +73,8 @@ const AdminCalendarPage = () => {
         day,
         month,
         year,
-        doctor: consulta.medico.nome, // Assuming you want to use the doctor's ID
-        patient: consulta.paciente.nome, // Assuming you want to use the patient's ID
+        doctor: consulta.medico.nome,
+        patient: consulta.paciente.nome, 
         time,
       };
     });
@@ -82,19 +82,18 @@ const AdminCalendarPage = () => {
   }, [myConsultas]);
 
   useEffect(() => {
-    const fetchConsultasUsuario = async () => {
+    const fetchAllConsultas = async () => {
       try {
-        const userId = localStorage.getItem("userToken");
-        const response = await fetch(`http://localhost:8080/consultas/paciente/${userId}`);
+        const response = await fetch(`http://localhost:8080/consultas`);
         const data = await response.json();
         setMyConsultas(data);
-        console.log("Consultas do usuário:", data);
+        console.log("Todas as consultas:", data);
       } catch (error) {
         console.error("Erro ao buscar consultas do usuário:", error);
       }
     };
 
-    fetchConsultasUsuario();
+    fetchAllConsultas();
   }, []);
   
     const handleCancelConsulta = async (consultaId: number) => {
@@ -186,8 +185,24 @@ const AdminCalendarPage = () => {
     };
   }, [selectedDay]);
 
+  const router = useRouter();
+
+  const handleAddNewConsultation = () => {
+    router.push("/pages/consultas/autorizados?showMenu=true");
+  };
+
+  
+
   return (
     <div className="w-full h-screen flex flex-col items-center relative">
+      {/* Botão: Ir adicionar nova consulta */}
+      <button
+        onClick={handleAddNewConsultation}
+        className="bg-blue-700 text-white py-2 px-4 rounded mt-4 hover:bg-blue-600"
+      >
+        Adicionar Nova Consulta
+      </button>
+
       {/* Calendário e navegação de meses */}
       <div
         className={`w-full h-full flex flex-col items-center ${
