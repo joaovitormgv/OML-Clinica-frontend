@@ -30,6 +30,7 @@ const AdminSchedulePage = () => {
   }
 
 
+
   const horariosFixos = [
     "08:00", "09:00", "10:00", "11:00",
     "13:00", "14:00", "15:00", "16:00", "17:00"
@@ -51,6 +52,11 @@ const AdminSchedulePage = () => {
     dataHora: "",
     status: ""
   });
+
+  // Filter consts
+  const [selectedMedico, setSelectedMedico] = useState<SelectOption | null>(null);
+  const [selectedPaciente, setSelectedPaciente] = useState<SelectOption | null>(null);
+  const [selectedData, setSelectedData] = useState<string | null>(null);
 
   // Consulta de todos os pacientes no banco de dados
   useEffect(() => {
@@ -208,24 +214,102 @@ const AdminSchedulePage = () => {
 
   };
 
+  const handleFilterChange = (selectedOption: SelectOption | null, name: string) => {
+    switch (name) {
+      case "medico":
+        setSelectedMedico(selectedOption);
+        console.log("Medico selecionado:", selectedOption);
+        break;
+      case "paciente":
+        setSelectedPaciente(selectedOption);
+        console.log("Paciente selecionado:", selectedOption);
+        break;
+      default:
+        break;
+    }
+  };
+
+
+  const handleInputDataChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setSelectedData(value);
+    console.log("Data selecionada:", value);
+
+    if (value) {
+      const filteredConsultas = consultas.filter((consulta) => consulta.data === value);
+      setConsultas(filteredConsultas);
+    } else {
+      setConsultas(consultas);
+    }
+  };
+
+
+
   return (
     <div className="w-full flex flex-row">
+      <ToastContainer />
       <div className="w-1/5 bg-gray-200 h-screen">
         <div id="leftside-content" className="flex flex-col mt-10 text-black">
           <p className="flex items-center justify-center font-bold text-xl">
             Filtros
           </p>
-          <div id="filters" className="font-semibold flex flex-col ml-5 mt-5">
-            <p>Data</p>
-            <p>Médico</p>
+          <div id="filters" className="font-semibold flex flex-col ml-5 mt-5 gap-4">
+            <div>
+              <p>Data</p>
+              <div id="date-filter" className="flex flex-col ml-5 mt-2 gap-2">
+                <input
+                  type="date"
+                  name="data"
+                  onChange={handleInputDataChange}
+                  className="border-2 border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600 w-3/4"
+                />
+              </div>
+            </div>
+
+            <div>
+              <p>Médico</p>
+              <div id="doctor-filter" className="flex flex-col ml-5 mt-2 gap-2">
+                <Select
+                  name="medico"
+                  onChange={(selectedOption: SelectOption | null) => handleFilterChange(selectedOption, "medico")}
+                  options={[
+                    { value: 0, label: "Todos" },
+                    ...medicos.map((medico) => ({
+                      value: medico.id,
+                      label: medico.nome,
+                    })),
+                  ]}
+                  className="w-3/4"
+                />
+              </div>
+            </div>
+
+            <div>
+              <p>Paciente</p>
+              <div id="doctor-filter" className="flex flex-col ml-5 mt-2 gap-2">
+                <Select
+                  name="paciente"
+                  onChange={(selectedOption: SelectOption | null) => handleFilterChange(selectedOption, "paciente")}
+                  options={[
+                    { value: 0, label: "Todos" },
+                    ...pacientes.map((paciente) => ({
+                      value: paciente.id,
+                      label: paciente.nome,
+                    })),
+                  ]}
+                  className="w-3/4"
+                />
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
 
       <div className="w-full flex flex-col items-center">
-        <ToastContainer />
+
         <div className="w-4/5 flex justify-between items-center mt-10">
-          <p className="text-2xl font-bold">Suas Consultas</p>
+          <p className="text-2xl font-bold">Todas Consultas</p>
           <button
             onClick={() => setShowNewConsultationMenu((prev) => !prev)}
             className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600"
