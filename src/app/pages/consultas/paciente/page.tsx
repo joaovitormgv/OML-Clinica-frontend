@@ -219,7 +219,7 @@ const UserSchedulePage = () => {
             </div>
             <button
               type="submit"
-              className="bg-blue-600 text-white font-semibold py-2 rounded-md mt-4"
+              className="bg-blue-600 text-white font-semibold py-2 rounded-md mt-4 mr-5"
             >
               Filtrar
             </button>
