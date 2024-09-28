@@ -30,7 +30,7 @@ const UserLoginPage = () => {
         localStorage.setItem('userCargo', 'paciente');
         console.log("Login successful");
         setTimeout(() => {
-          router.push('/pages/consultas/autorizados/calendario');
+          router.push('/pages/consultas/paciente');
         }, 1000);
       } else {
         // Handle login error

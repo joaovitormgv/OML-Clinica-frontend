@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Select from "react-select";
 import Mostrador from "@/app/components/mostrador/mostrador";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -13,6 +14,11 @@ const UserSchedulePage = () => {
     doctor: string;
     patient: string;
     time: string;
+  }
+
+  interface Entidade {
+    id: number;
+    nome: string;
   }
 
   const initialAppointments: Consulta[] = [];
@@ -30,8 +36,17 @@ const UserSchedulePage = () => {
     horario: string;
   }
 
-  const [myConsultas, setMyConsultas] = useState<NewConsultationData[]> ([]);
+  interface SelectOption {
+    value: number;
+    label: string;
+  }
+
+  const [myConsultas, setMyConsultas] = useState<NewConsultationData[]>([]);
   const [appointments, setAppointments] = useState(initialAppointments);
+  const [medicos, setMedicos] = useState<Entidade[]>([]);
+  const [originalConsultas, setOriginalConsultas] = useState<NewConsultationData[]>([]);
+  const [selectedMedico, setSelectedMedico] = useState<SelectOption | null>(null);
+  const [selectedData, setSelectedData] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchConsultasUsuario = async () => {
@@ -45,6 +60,7 @@ const UserSchedulePage = () => {
         const response = await fetch(`http://localhost:8080/consultas/paciente/${userId}`);
         const data = await response.json();
         setMyConsultas(data);
+        setOriginalConsultas(data);
         console.log("Consultas do usuário:", data);
       } catch (error) {
         if (error instanceof Error) {
@@ -100,12 +116,64 @@ const UserSchedulePage = () => {
         month,
         year,
         doctor: consulta.medico.nome,
-        patient: consulta.paciente.nome, 
+        patient: consulta.paciente.nome,
         time,
       };
     });
     setAppointments(serializedAppointments);
   }, [myConsultas]);
+
+  useEffect(() => {
+    const fetchMedicos = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/medicos");
+        const data = await response.json();
+        setMedicos(data);
+        console.log("Medicos:", data);
+      } catch (error) {
+        console.error("Erro ao buscar médicos:", error);
+      }
+    };
+    fetchMedicos();
+  }, []);
+
+  const handleFilterSubmit = (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    let filteredConsultas = originalConsultas;
+
+    if (selectedMedico && selectedMedico.value !== 0) {
+      filteredConsultas = filteredConsultas.filter((consulta) => consulta.medico.id === selectedMedico.value);
+    }
+
+    if (selectedData) {
+      console.log("Consultas:", originalConsultas);
+      const formattedSelectedData = new Date(selectedData).toISOString().split('T')[0];
+      console.log("Data selecionada:", formattedSelectedData);
+      filteredConsultas = filteredConsultas.filter((consulta) => consulta.dataHora && consulta.dataHora.includes(formattedSelectedData));
+      console.log("Consultas filtradas:", filteredConsultas);
+    }
+
+
+    setMyConsultas(filteredConsultas);
+  }
+
+  const handleInputDataChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setSelectedData(value);
+    console.log("Data selecionada:", value);
+  };
+
+  const handleFilterChange = (selectedOption: SelectOption | null, name: string) => {
+    switch (name) {
+      case "medico":
+        setSelectedMedico(selectedOption);
+        console.log("Medico selecionado:", selectedOption);
+        break;
+      default:
+        break;
+    }
+  };
+
 
   return (
     <div className="w-full flex flex-row h-screen">
@@ -115,20 +183,52 @@ const UserSchedulePage = () => {
           <p className="flex items-center justify-center font-bold text-xl">
             Filtros
           </p>
-          <div id="filters" className="font-semibold flex flex-col ml-5 mt-5">
-            <p>Data</p>
-            <p>Médico</p>
-          </div>
+          <form
+            id="filters"
+            className="font-semibold flex flex-col ml-5 mt-5 gap-4"
+            onSubmit={handleFilterSubmit}
+          >
+            <div>
+              <p>Data</p>
+              <div id="date-filter" className="flex flex-col ml-5 mt-2 gap-2">
+                <input
+                  type="date"
+                  name="data"
+                  onChange={handleInputDataChange}
+                  className="border-2 border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600 w-3/4"
+                />
+              </div>
+            </div>
+
+            <div>
+              <p>Médico</p>
+              <div id="doctor-filter" className="flex flex-col ml-5 mt-2 gap-2">
+                <Select
+                  name="medico"
+                  onChange={(selectedOption: SelectOption | null) => handleFilterChange(selectedOption, "medico")}
+                  options={[
+                    { value: 0, label: "Todos" },
+                    ...medicos.map((medico) => ({
+                      value: medico.id,
+                      label: medico.nome,
+                    })),
+                  ]}
+                  className="w-3/4"
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              className="bg-blue-600 text-white font-semibold py-2 rounded-md mt-4"
+            >
+              Filtrar
+            </button>
+          </form>
         </div>
       </div>
       <div className="w-4/5 h-full overflow-hidden">
         <div id="rightside-content" className="flex flex-col mt-10 ml-8">
           <p className="text-2xl font-bold">Minhas Consultas</p>
-          <input
-            type="text"
-            placeholder="Pesquisar..."
-            className="mt-1 px-2 py-1 border-2 border-blue-700 rounded-lg focus:outline-none focus:border-blue-700 w-48"
-          />
           <div id="showschedule" className="mt-6">
             {/* Aqui você renderiza o componente Mostrador passando os dados */}
             <Mostrador
@@ -140,7 +240,6 @@ const UserSchedulePage = () => {
                   data: `${app.day}/${app.month}/${app.year}`,
                   horario: app.time,
                 }))}
-              onCancel={handleCancelConsulta}
 
             />
           </div>

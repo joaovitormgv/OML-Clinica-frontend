@@ -32,7 +32,7 @@ const Navbar = () => {
                     <Link href="/pages/cargo" className={`${styles.link} ${pathname === "/pages/cargo" ? styles.active : ""}`}>
                         Início
                     </Link>
-                    { cargo !== "paciente" && (
+                    { cargo !== "paciente" ? (
                         <>
                             <Link href="/pages/admin/adicionarUsuarios" className={`${styles.link} ${pathname === "/pages/admin/adicionarUsuarios" ? styles.active : ""}`}>
                                 Cadastros
@@ -44,6 +44,10 @@ const Navbar = () => {
                                     Consultas
                             </Link>
                         </>
+                        ) : (
+                        <Link href="/pages/consultas/paciente" className={`${styles.link} ${pathname === "/pages/consultas/paciente" ? styles.active : ""}`}>
+                            Minhas Consultas
+                        </Link>
                         )
                     }
                 </div>
