@@ -32,7 +32,6 @@ const initialAppointments: Consulta[] = [];
 const AdminCalendarPage = () => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [myConsultas, setMyConsultas] = useState<NewConsultationData[]>([]);
-  const [todasConsultas, setTodasConsultas] = useState<NewConsultationData[]>([]);
   const [appointments, setAppointments] = useState(initialAppointments);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth()); // Mês atual
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear()); // Ano atual
