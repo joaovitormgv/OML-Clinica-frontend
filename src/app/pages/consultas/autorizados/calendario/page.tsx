@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Mostrador from "@/app/components/mostrador/mostrador";
 import { toast, ToastContainer } from "react-toastify";
 // Exemplo de dados de consultas
@@ -184,8 +185,24 @@ const AdminCalendarPage = () => {
     };
   }, [selectedDay]);
 
+  const router = useRouter();
+
+  const handleAddNewConsultation = () => {
+    router.push("/pages/consultas/autorizados?showMenu=true");
+  };
+
+  
+
   return (
     <div className="w-full h-screen flex flex-col items-center relative">
+      {/* Botão: Ir adicionar nova consulta */}
+      <button
+        onClick={handleAddNewConsultation}
+        className="bg-blue-700 text-white py-2 px-4 rounded mt-4 hover:bg-blue-600"
+      >
+        Adicionar Nova Consulta
+      </button>
+
       {/* Calendário e navegação de meses */}
       <div
         className={`w-full h-full flex flex-col items-center ${

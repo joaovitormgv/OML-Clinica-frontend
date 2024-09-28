@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Select from "react-select";
 import { format } from "date-fns";
 import { toast, ToastContainer } from "react-toastify";
@@ -9,6 +10,8 @@ import { debounce } from "lodash";
 
 
 const AdminSchedulePage = () => {
+  const router = useRouter();
+
   interface Consulta {
     id: any;
     paciente: { id: number };
@@ -43,7 +46,15 @@ const AdminSchedulePage = () => {
 
   const [horariosDisponiveis, setHorariosDisponiveis] = useState<string[]>(horariosFixos);
 
-  const [showNewConsultationMenu, setShowNewConsultationMenu] = useState(false);
+  const searchParams = useSearchParams();
+  let showMenu = searchParams.get('showMenu') === 'true';
+  console.log("Show menu:", showMenu);
+
+  if ( !showMenu ) {
+    showMenu = false;
+  }
+
+  const [showNewConsultationMenu, setShowNewConsultationMenu] = useState(showMenu);
   const [newConsultationData, setNewConsultationData] = useState({
     id: 0,
     paciente: { id: 0 },
@@ -271,10 +282,10 @@ const AdminSchedulePage = () => {
           <p className="flex items-center justify-center font-bold text-xl">
             Filtros
           </p>
-          <form 
-          id="filters" 
-          className="font-semibold flex flex-col ml-5 mt-5 gap-4"
-          onSubmit={handleFilterSubmit}
+          <form
+            id="filters"
+            className="font-semibold flex flex-col ml-5 mt-5 gap-4"
+            onSubmit={handleFilterSubmit}
           >
             <div>
               <p>Data</p>
@@ -323,9 +334,9 @@ const AdminSchedulePage = () => {
                 />
               </div>
             </div>
-            <button 
-            className="bg-blue-700 text-white px-4 py-2 mr-5 rounded hover:bg-blue-600"
-            type="submit"
+            <button
+              className="bg-blue-700 text-white px-4 py-2 mr-5 rounded hover:bg-blue-600"
+              type="submit"
             >
               Filtrar
             </button>
