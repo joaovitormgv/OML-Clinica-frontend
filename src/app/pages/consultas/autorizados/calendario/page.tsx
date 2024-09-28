@@ -73,8 +73,8 @@ const AdminCalendarPage = () => {
         day,
         month,
         year,
-        doctor: consulta.medico.nome, // Assuming you want to use the doctor's ID
-        patient: consulta.paciente.nome, // Assuming you want to use the patient's ID
+        doctor: consulta.medico.nome,
+        patient: consulta.paciente.nome, 
         time,
       };
     });
