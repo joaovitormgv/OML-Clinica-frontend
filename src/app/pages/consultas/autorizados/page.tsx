@@ -38,6 +38,7 @@ const AdminSchedulePage = () => {
 
   const [pacientes, setPacientes] = useState<Entidade[]>([]);
   const [medicos, setMedicos] = useState<Entidade[]>([]);
+  const [originalConsultas, setOriginalConsultas] = useState<Consulta[]>([]);
   const [consultas, setConsultas] = useState<Consulta[]>([]);
 
   const [horariosDisponiveis, setHorariosDisponiveis] = useState<string[]>(horariosFixos);
@@ -95,6 +96,7 @@ const AdminSchedulePage = () => {
       try {
         const response = await fetch("http://localhost:8080/consultas");
         const data = await response.json();
+        setOriginalConsultas(data);
         setConsultas(data);
         console.log("Consultas:", data);
       } catch (error) {
@@ -234,14 +236,30 @@ const AdminSchedulePage = () => {
     const { value } = e.target;
     setSelectedData(value);
     console.log("Data selecionada:", value);
-
-    if (value) {
-      const filteredConsultas = consultas.filter((consulta) => consulta.data === value);
-      setConsultas(filteredConsultas);
-    } else {
-      setConsultas(consultas);
-    }
   };
+
+  const handleFilterSubmit = (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    let filteredConsultas = originalConsultas;
+
+    if (selectedMedico && selectedMedico.value !== 0) {
+      filteredConsultas = filteredConsultas.filter((consulta) => consulta.medico.id === selectedMedico.value);
+    }
+
+    if (selectedPaciente && selectedPaciente.value !== 0) {
+      filteredConsultas = filteredConsultas.filter((consulta) => consulta.paciente.id === selectedPaciente.value);
+    }
+
+    if (selectedData) {
+      console.log("Consultas:", originalConsultas);
+      const formattedSelectedData = new Date(selectedData).toISOString().split('T')[0];
+      console.log("Data selecionada:", formattedSelectedData);
+      filteredConsultas = filteredConsultas.filter((consulta) => consulta.dataHora && consulta.dataHora.includes(formattedSelectedData));
+      console.log("Consultas filtradas:", filteredConsultas);
+    }
+
+    setConsultas(filteredConsultas);
+  }
 
 
 
@@ -253,7 +271,11 @@ const AdminSchedulePage = () => {
           <p className="flex items-center justify-center font-bold text-xl">
             Filtros
           </p>
-          <div id="filters" className="font-semibold flex flex-col ml-5 mt-5 gap-4">
+          <form 
+          id="filters" 
+          className="font-semibold flex flex-col ml-5 mt-5 gap-4"
+          onSubmit={handleFilterSubmit}
+          >
             <div>
               <p>Data</p>
               <div id="date-filter" className="flex flex-col ml-5 mt-2 gap-2">
@@ -301,8 +323,13 @@ const AdminSchedulePage = () => {
                 />
               </div>
             </div>
-
-          </div>
+            <button 
+            className="bg-blue-700 text-white px-4 py-2 mr-5 rounded hover:bg-blue-600"
+            type="submit"
+            >
+              Filtrar
+            </button>
+          </form>
         </div>
       </div>
 
