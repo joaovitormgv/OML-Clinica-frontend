@@ -449,9 +449,6 @@ const AdminSchedulePage = () => {
                 <p className="text-sm">Data: {dataFormatada}</p>
                 <p className="text-sm">Horário: {consultation.horario}</p>
                 <div className="mt-2 flex space-x-2">
-                  <button className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-400">
-                    Remarcar
-                  </button>
                   <button
                     className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500"
                     onClick={async () => {
