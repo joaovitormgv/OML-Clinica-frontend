@@ -82,19 +82,18 @@ const AdminCalendarPage = () => {
   }, [myConsultas]);
 
   useEffect(() => {
-    const fetchConsultasUsuario = async () => {
+    const fetchAllConsultas = async () => {
       try {
-        const userId = localStorage.getItem("userToken");
-        const response = await fetch(`http://localhost:8080/consultas/paciente/${userId}`);
+        const response = await fetch(`http://localhost:8080/consultas`);
         const data = await response.json();
         setMyConsultas(data);
-        console.log("Consultas do usuário:", data);
+        console.log("Todas as consultas:", data);
       } catch (error) {
         console.error("Erro ao buscar consultas do usuário:", error);
       }
     };
 
-    fetchConsultasUsuario();
+    fetchAllConsultas();
   }, []);
   
     const handleCancelConsulta = async (consultaId: number) => {
