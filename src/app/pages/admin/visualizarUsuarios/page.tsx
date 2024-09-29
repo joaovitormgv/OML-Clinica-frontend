@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 interface User {
   id: number;
   nome: string;
+  email: string;
   cargo: string; // paciente, medico, atendente
   uniqueId: string;
 }
@@ -17,8 +18,9 @@ const ViewUsersPage = () => {
   const [pacientes, setPacientes] = useState<User[]>([]);
   const [selectedRole, setSelectedRole] = useState<string>("Paciente");
   const [userRole, setUserRole] = useState<string | null>(null); // Armazenando o cargo do usuário
+  const [editingUserId, setEditingUserId] = useState<number | null>(null); // Armazenando o ID do usuário que está sendo editado
+  const [editedUser, setEditedUser] = useState<Partial<User>>({});
 
-  // Simulando dados fictícios de usuários
 
     useEffect(() => {
       const fetchMedicos = async () => {
@@ -34,7 +36,6 @@ const ViewUsersPage = () => {
             uniqueId: `${medico.id}-medico`,
           }));
           setMedicos(medicosComCargo);
-          console.log("Médicos buscados com sucesso", data);
         } catch (error) {
           console.error("Erro ao buscar médicos", error);
         }
@@ -61,7 +62,6 @@ const ViewUsersPage = () => {
           }))
           ;
           setAdmins(atendentes);
-          console.log("Atendentes buscados com sucesso", atendentes);
         } catch (error) {
           console.error("Erro ao buscar administradores", error);
         }
@@ -83,7 +83,6 @@ const ViewUsersPage = () => {
             uniqueId: `${paciente.id}-paciente`,
           }));
           setPacientes(pacientesComCargo);
-          console.log("Pacientes buscados com sucesso", pacientesComCargo);
         } catch (error) {
           console.error("Erro ao buscar pacientes", error);
         }
@@ -99,7 +98,6 @@ const ViewUsersPage = () => {
 
     const role = localStorage.getItem("userCargo"); // Pode ser "Administrador", "Atendente" ou "Paciente"
     setUserRole(role);
-    console.log(`Cargo do usuário: ${role}`);
   }, []);
 
   const deleteMedico = async (id: number) => {
@@ -192,10 +190,123 @@ const ViewUsersPage = () => {
   // Filtra os usuários com base no cargo selecionado
   useEffect(() => {
     const usersByRole = getUsersByRole();
-    console.log(`Usuários filtrados por cargo: ${selectedRole}`, usersByRole);
-    usersByRole.map((user) => console.log(user.uniqueId));
     setUsers(usersByRole);
   }, [selectedRole, medicos, admins, pacientes]);
+
+    // Função para iniciar a edição de um usuário
+    const startEditing = (user: User) => {
+      setEditingUserId(user.id);
+      setEditedUser({ nome: user.nome, email: user.email, cargo: user.cargo });
+      console.log(`Iniciando edição do usuário ${user.id}`);
+      console.log(`Nome: ${user.nome}`);
+      console.log(`Email: ${user.email}`);
+    };
+  
+    // Função para salvar as alterações do usuário
+    const saveUser = (id: number) => {
+      console.log(`Salvando alterações do usuário ${id}`);
+
+      // Atualizar o usuário no backend
+      switch (editedUser.cargo) {
+        case "Médico":
+          console.log("Atualizando médico");
+          const editMedico = async () => {
+            try {
+              const response = await fetch(`http://localhost:8080/medicos/${id}`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(editedUser),
+              });
+              if (!response.ok) {
+                throw new Error("Erro ao atualizar médico");
+              }
+              setMedicos((medicos) =>
+                medicos.map((medico) => (medico.id === id ? { ...medico, ...editedUser } : medico))
+              );
+              console.log("Médico atualizado com sucesso");
+              toast.success("Médico atualizado com sucesso");
+            } catch (error) {
+              console.error("Erro ao atualizar médico", error);
+              toast.error("Erro ao atualizar médico");
+            }
+          }
+
+          editMedico();
+          break;
+        case "Atendente":
+          console.log("Atualizando atendente");
+          const editAtendente = async () => {
+            try {
+              const response = await fetch(`http://localhost:8080/usuarios/${id}`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(editedUser),
+              });
+              if (!response.ok) {
+                throw new Error("Erro ao atualizar atendente");
+              }
+              setAdmins((admins) =>
+                admins.map((admin) => (admin.id === id ? { ...admin, ...editedUser } : admin))
+              );
+              console.log("Atendente atualizado com sucesso");
+              toast.success("Atendente atualizado com sucesso");
+            } catch (error) {
+              console.error("Erro ao atualizar atendente", error);
+              toast.error("Erro ao atualizar atendente");
+            }
+          }
+
+          editAtendente();
+          break;
+
+        case "Paciente":
+          console.log("Atualizando paciente");
+          const editPaciente = async () => {
+            try {
+              const response = await fetch(`http://localhost:8080/pacientes/${id}`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(editedUser),
+              });
+              if (!response.ok) {
+                const errorText = await response.text();
+                console.log("Erro na resposta do servidor:", response.status, errorText);
+                throw new Error("Erro ao atualizar paciente");
+
+              }
+              setPacientes((pacientes) =>
+                pacientes.map((paciente) => (paciente.id === id ? { ...paciente, ...editedUser } : paciente))
+              );
+              toast.success("Paciente atualizado com sucesso");
+              console.log("Paciente atualizado com sucesso");
+            } catch (error) {
+              console.error("Erro ao atualizar paciente", error);
+              toast.error("Erro ao atualizar paciente");
+            }
+          }
+
+          editPaciente();
+          break;
+        default:
+          console.error("Cargo inválido");
+          break;
+      }
+
+      setEditingUserId(null);
+    };
+  
+    // Função para cancelar a edição
+    const cancelEditing = () => {
+      setEditingUserId(null);
+      setEditedUser({});
+    };
+  
 
   return (
     <div className="min-h-screen flex flex-col items-center">
@@ -238,6 +349,7 @@ const ViewUsersPage = () => {
             <tr>
               <th className="px-4 py-2">Cargo</th>
               <th className="px-4 py-2">Nome</th>
+              <th className="px-4 py-2">Email</th>
               {userRole !== "Paciente" && <th className="px-4 py-2">Ação</th>}
             </tr>
           </thead>
@@ -246,17 +358,62 @@ const ViewUsersPage = () => {
               .filter((user) => user.cargo === selectedRole || selectedRole === "")
               .map((user) => (
               <tr key={user.uniqueId}>
+                {editingUserId === user.id ? (
+                  <>
+                    <td className="border px-4 py-2">{user.cargo}</td>
+                    <td className="border px-4 py-2">
+                      <input
+                        type="text"
+                        value={editedUser.nome}
+                        onChange={(e) => setEditedUser({ ...editedUser, nome: e.target.value })}
+                        className="border-2 border-gray-300 rounded-md p-2"
+                      />
+                    </td>
+                    <td className="border px-4 py-2">
+                      <input
+                        type="email"
+                        value={editedUser.email}
+                        onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })}
+                        className="border-2 border-gray-300 rounded-md p-2"
+                      />
+                    </td>
+                    <td className="border px-4 py-2">
+                      <button
+                        onClick={() => saveUser(user.id)}
+                        className="bg-green-500 text-white py-1 px-3 rounded-lg mr-2 hover:bg-green-600"
+                      >
+                        Salvar
+                      </button>
+                      <button
+                        onClick={cancelEditing}
+                        className="bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
+                      >
+                        Cancelar
+                      </button>
+                    </td>
+                  </>
+                ) : (
+                <>
                 <td className="border px-4 py-2">{user.cargo}</td>
                 <td className="border px-4 py-2">{user.nome}</td>
+                <td className="border px-4 py-2">{user.email}</td>
                 {userRole !== "Paciente" && (
                 <td className="border px-4 py-2">
                   <button
                   onClick={() => deleteUser(user.cargo, user.id)}
-                  className="bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
+                  className="bg-red-500 text-white py-1 px-3 rounded-lg mr-2 hover:bg-red-600"
                   >
                   Excluir
                   </button>
+                  <button
+                  onClick={() => startEditing(user)}
+                  className="bg-yellow-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
+                  >
+                  Editar
+                  </button>
                 </td>
+                )}
+                </>
                 )}
               </tr>
               ))}

@@ -43,6 +43,9 @@ const Navbar = () => {
                             <Link href="/pages/consultas/autorizados" className={`${styles.link} ${pathname === "/pages/consultas/autorizados" ? styles.active : ""}`}>
                                     Consultas
                             </Link>
+                            <Link href="/pages/admin/visualizarUsuarios" className={`${styles.link} ${pathname === "/pages/admin/visualizarUsuarios" ? styles.active : ""}`}>
+                                    Usuários
+                            </Link>
                         </>
                         ) : (
                         <Link href="/pages/consultas/paciente" className={`${styles.link} ${pathname === "/pages/consultas/paciente" ? styles.active : ""}`}>
