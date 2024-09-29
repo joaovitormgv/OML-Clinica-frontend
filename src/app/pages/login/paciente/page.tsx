@@ -27,7 +27,7 @@ const UserLoginPage = () => {
         // Handle successful login
         toast.success("Login efetuado com sucesso");
         localStorage.setItem('userToken', data.id);
-        localStorage.setItem('userCargo', 'paciente');
+        localStorage.setItem('userCargo', 'Paciente');
         console.log("Login successful");
         setTimeout(() => {
           router.push('/pages/consultas/paciente');

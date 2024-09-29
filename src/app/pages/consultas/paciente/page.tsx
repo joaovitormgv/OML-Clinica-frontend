@@ -53,7 +53,7 @@ const UserSchedulePage = () => {
       try {
         const userId = localStorage.getItem("userToken");
         const userCargo = localStorage.getItem("userCargo");
-        if (!userId || userCargo !== "paciente") {
+        if (!userId || userCargo !== "Paciente") {
           throw new Error("Paciente não autenticado");
         }
 
