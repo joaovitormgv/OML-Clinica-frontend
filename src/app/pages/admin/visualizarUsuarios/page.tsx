@@ -25,7 +25,7 @@ const ViewUsersPage = () => {
     useEffect(() => {
       const fetchMedicos = async () => {
         try {
-          const response = await fetch("http://localhost:8080/medicos");
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/medicos`);
           if (!response.ok) {
             throw new Error("Erro ao buscar médicos");
           }
@@ -47,7 +47,7 @@ const ViewUsersPage = () => {
     useEffect(() => {
       const fetchAtendentes = async () => {
         try {
-          const response = await fetch("http://localhost:8080/usuarios")
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/usuarios`)
           if (!response.ok) {
             throw new Error("Erro ao buscar administradores");
           }
@@ -72,7 +72,7 @@ const ViewUsersPage = () => {
     useEffect(() => {
       const fetchPacientes = async () => {
         try {
-          const response = await fetch("http://localhost:8080/pacientes");
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pacientes`);
           if (!response.ok) {
             throw new Error("Erro ao buscar pacientes");
           }
@@ -102,7 +102,7 @@ const ViewUsersPage = () => {
 
   const deleteMedico = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:8080/medicos/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/medicos/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -122,7 +122,7 @@ const ViewUsersPage = () => {
 
   const deleteAtendente = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:8080/usuarios/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/usuarios/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -138,7 +138,7 @@ const ViewUsersPage = () => {
 
   const deletePaciente = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:8080/pacientes/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pacientes/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -212,7 +212,7 @@ const ViewUsersPage = () => {
           console.log("Atualizando médico");
           const editMedico = async () => {
             try {
-              const response = await fetch(`http://localhost:8080/medicos/${id}`, {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/medicos/${id}`, {
                 method: "PUT",
                 headers: {
                   "Content-Type": "application/json",
@@ -239,7 +239,7 @@ const ViewUsersPage = () => {
           console.log("Atualizando atendente");
           const editAtendente = async () => {
             try {
-              const response = await fetch(`http://localhost:8080/usuarios/${id}`, {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/usuarios/${id}`, {
                 method: "PUT",
                 headers: {
                   "Content-Type": "application/json",
@@ -267,7 +267,7 @@ const ViewUsersPage = () => {
           console.log("Atualizando paciente");
           const editPaciente = async () => {
             try {
-              const response = await fetch(`http://localhost:8080/pacientes/${id}`, {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pacientes/${id}`, {
                 method: "PUT",
                 headers: {
                   "Content-Type": "application/json",
