@@ -57,7 +57,7 @@ const UserSchedulePage = () => {
           throw new Error("Paciente não autenticado");
         }
 
-        const response = await fetch(`http://localhost:8080/consultas/paciente/${userId}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/consultas/paciente/${userId}`);
         const data = await response.json();
         setMyConsultas(data);
         setOriginalConsultas(data);
@@ -81,7 +81,7 @@ const UserSchedulePage = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:8080/consultas/${consultaId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/consultas/${consultaId}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
@@ -126,7 +126,7 @@ const UserSchedulePage = () => {
   useEffect(() => {
     const fetchMedicos = async () => {
       try {
-        const response = await fetch("http://localhost:8080/medicos");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/medicos`);
         const data = await response.json();
         setMedicos(data);
         console.log("Medicos:", data);

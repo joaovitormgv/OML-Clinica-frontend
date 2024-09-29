@@ -84,7 +84,7 @@ const AdminCalendarPage = () => {
   useEffect(() => {
     const fetchAllConsultas = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/consultas`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/consultas`);
         const data = await response.json();
         setMyConsultas(data);
         console.log("Todas as consultas:", data);
@@ -103,7 +103,7 @@ const AdminCalendarPage = () => {
           return;
         }
 
-        const response = await fetch(`http://localhost:8080/consultas/${consultaId}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/consultas/${consultaId}`, {
           method: 'DELETE',
         });
         if (!response.ok) {

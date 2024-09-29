@@ -13,7 +13,7 @@ const UserLoginPage = () => {
     console.log("Login data:", formData);
 
     try {
-      const response = await fetch('http://localhost:8080/pacientes/login', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pacientes/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

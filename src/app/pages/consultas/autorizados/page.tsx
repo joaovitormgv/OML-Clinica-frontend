@@ -74,7 +74,7 @@ const AdminSchedulePage = () => {
   useEffect(() => {
     const fetchPacientes = async () => {
       try {
-        const response = await fetch("http://localhost:8080/pacientes");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pacientes`);
         const data = await response.json();
         setPacientes(data);
         console.log("Pacientes:", data);
@@ -91,7 +91,7 @@ const AdminSchedulePage = () => {
   useEffect(() => {
     const fetchMedicos = async () => {
       try {
-        const response = await fetch("http://localhost:8080/medicos");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/medicos`);
         const data = await response.json();
         setMedicos(data);
         console.log("Medicos:", data);
@@ -105,7 +105,7 @@ const AdminSchedulePage = () => {
   useEffect(() => {
     const fetchConsultas = async () => {
       try {
-        const response = await fetch("http://localhost:8080/consultas");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/consultas`);
         const data = await response.json();
         setOriginalConsultas(data);
         setConsultas(data);
@@ -121,7 +121,7 @@ const AdminSchedulePage = () => {
     if (!medicoId || !data) return;
 
     try {
-      const response = await fetch(`http://localhost:8080/consultas/medicoDia?medicoId=${medicoId}&data=${data}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/consultas/medicoDia?medicoId=${medicoId}&data=${data}`);
 
 
       const consultas = await response.json();
@@ -196,7 +196,7 @@ const AdminSchedulePage = () => {
 
 
     try {
-      const response = await fetch("http://localhost:8080/consultas", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/consultas`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -457,7 +457,7 @@ const AdminSchedulePage = () => {
                       if (!confirm) return;
 
                       try {
-                        const response = await fetch(`http://localhost:8080/consultas/${consultation.id}`, {
+                        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/consultas/${consultation.id}`, {
                           method: "DELETE",
                         });
                         console.log("HTTP status:", response.status);
