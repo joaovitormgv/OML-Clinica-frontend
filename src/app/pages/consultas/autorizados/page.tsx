@@ -232,11 +232,11 @@ const AdminSchedulePage = () => {
                 <div>
                 <label className="block font-semibold">Nome do Paciente</label>
                 <Select
-                  name="paciente"
+                  name="Paciente"
                   value={pacientes
                     .filter(paciente => paciente.id === Number(newConsultationData.paciente.id))
                     .map(paciente => ({ value: paciente.id, label: paciente.nome }))[0] || null}
-                  onChange={(selectedOption: SelectOption | null) => handleSelectChange(selectedOption, "paciente")}
+                  onChange={(selectedOption: SelectOption | null) => handleSelectChange(selectedOption, "Paciente")}
                   options={pacientes.map((paciente) => ({
                   value: paciente.id,
                   label: paciente.nome,
