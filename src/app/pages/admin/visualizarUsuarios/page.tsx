@@ -238,8 +238,8 @@ const ViewUsersPage = () => {
           <thead>
             <tr>
               <th className="px-4 py-2">Cargo</th>
-              <th className="px-4 py-2">Email</th>
               <th className="px-4 py-2">Nome</th>
+              <th className="px-4 py-2">Email</th>
               {userRole !== "Paciente" && <th className="px-4 py-2">Ação</th>}
             </tr>
           </thead>
@@ -249,8 +249,8 @@ const ViewUsersPage = () => {
               .map((user) => (
               <tr key={user.uniqueId}>
                 <td className="border px-4 py-2">{user.cargo}</td>
-                <td className="border px-4 py-2">{user.email}</td>
                 <td className="border px-4 py-2">{user.nome}</td>
+                <td className="border px-4 py-2">{user.email}</td>
                 {userRole !== "Paciente" && (
                 <td className="border px-4 py-2">
                   <button
