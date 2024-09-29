@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import styles from "./navbar.module.css";
+import styles from "./Navbar.module.css";
 import LogoutButton from "../logout/logout";
 
 const Navbar = () => {
