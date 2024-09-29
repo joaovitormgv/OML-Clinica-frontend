@@ -12,7 +12,7 @@ const CargoPage = () => {
             </div>
 
             <div className="relative flex flex-col items-center justify-center mt-10 gap-10">
-                <h3 className="text-2xl font-semibold">Selecione o seu cargo</h3>
+                <h3 className="text-2xl text-white font-semibold">Selecione o seu cargo</h3>
                 <Link href="/pages/admin/login" className="w-[25%]">
                     <button className="bg-white w-full h-16 text-customBlue rounded-xl font-bold text-xl hover:bg-customBlue hover:text-white">
                         Administrador ou Atendente

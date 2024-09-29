@@ -8,7 +8,7 @@ interface MostradorProps {
     data: string;
     horario: string;
   }[];
-  onCancel: (index: number) => void;
+  onCancel?: (index: number) => void;
 }
 
 const Mostrador: React.FC<MostradorProps> = ({ dados, onCancel }) => {
@@ -43,10 +43,8 @@ const Mostrador: React.FC<MostradorProps> = ({ dados, onCancel }) => {
             </div>
 
             {/* Botões de Remarcar e Cancelar */}
+            { onCancel && (
             <div className="flex flex-col items-end space-y-2">
-              <button className="text-black font-semibold px-2 py-1 rounded-lg hover:bg-blue-500">
-                Remarcar
-              </button>
               <button 
               className="text-black font-semibold px-2 py-1 rounded-lg hover:bg-red-500"
               onClick={() => onCancel(item.id)}
@@ -54,6 +52,7 @@ const Mostrador: React.FC<MostradorProps> = ({ dados, onCancel }) => {
                 Cancelar
               </button>
             </div>
+            )}
           </div>
         ))}
       </div>
