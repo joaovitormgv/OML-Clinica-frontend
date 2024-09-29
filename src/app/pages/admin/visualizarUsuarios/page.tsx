@@ -18,8 +18,9 @@ const ViewUsersPage = () => {
   const [pacientes, setPacientes] = useState<User[]>([]);
   const [selectedRole, setSelectedRole] = useState<string>("Paciente");
   const [userRole, setUserRole] = useState<string | null>(null); // Armazenando o cargo do usuário
+  const [editingUserId, setEditingUserId] = useState<number | null>(null); // Armazenando o ID do usuário que está sendo editado
+  const [editedUser, setEditedUser] = useState<Partial<User>>({});
 
-  // Simulando dados fictícios de usuários
 
     useEffect(() => {
       const fetchMedicos = async () => {
@@ -198,6 +199,26 @@ const ViewUsersPage = () => {
     setUsers(usersByRole);
   }, [selectedRole, medicos, admins, pacientes]);
 
+    // Função para iniciar a edição de um usuário
+    const startEditing = (user: User) => {
+      setEditingUserId(user.id);
+      setEditedUser({ nome: user.nome, email: user.email });
+    };
+  
+    // Função para salvar as alterações do usuário
+    const saveUser = (id: number) => {
+      setUsers(users.map((user) => (user.id === id ? { ...user, ...editedUser } : user)));
+      setEditingUserId(null);
+      toast.success("Usuário atualizado com sucesso");
+    };
+  
+    // Função para cancelar a edição
+    const cancelEditing = () => {
+      setEditingUserId(null);
+      setEditedUser({});
+    };
+  
+
   return (
     <div className="min-h-screen flex flex-col items-center">
       <ToastContainer />
@@ -248,6 +269,42 @@ const ViewUsersPage = () => {
               .filter((user) => user.cargo === selectedRole || selectedRole === "")
               .map((user) => (
               <tr key={user.uniqueId}>
+                {editingUserId === user.id ? (
+                  <>
+                    <td className="border px-4 py-2">{user.cargo}</td>
+                    <td className="border px-4 py-2">
+                      <input
+                        type="text"
+                        value={editedUser.nome}
+                        onChange={(e) => setEditedUser({ ...editedUser, nome: e.target.value })}
+                        className="border-2 border-gray-300 rounded-md p-2"
+                      />
+                    </td>
+                    <td className="border px-4 py-2">
+                      <input
+                        type="email"
+                        value={editedUser.email}
+                        onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })}
+                        className="border-2 border-gray-300 rounded-md p-2"
+                      />
+                    </td>
+                    <td className="border px-4 py-2">
+                      <button
+                        onClick={() => saveUser(user.id)}
+                        className="bg-green-500 text-white py-1 px-3 rounded-lg mr-2 hover:bg-green-600"
+                      >
+                        Salvar
+                      </button>
+                      <button
+                        onClick={cancelEditing}
+                        className="bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
+                      >
+                        Cancelar
+                      </button>
+                    </td>
+                  </>
+                ) : (
+                <>
                 <td className="border px-4 py-2">{user.cargo}</td>
                 <td className="border px-4 py-2">{user.nome}</td>
                 <td className="border px-4 py-2">{user.email}</td>
@@ -260,12 +317,14 @@ const ViewUsersPage = () => {
                   Excluir
                   </button>
                   <button
-                  onClick={() => {}}
+                  onClick={() => startEditing(user)}
                   className="bg-yellow-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
                   >
                   Editar
                   </button>
                 </td>
+                )}
+                </>
                 )}
               </tr>
               ))}
