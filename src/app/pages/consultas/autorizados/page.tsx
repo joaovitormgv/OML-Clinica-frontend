@@ -275,7 +275,6 @@ const AdminSchedulePage = () => {
 
 
   return (
-    <Suspense fallback={<div>Carregando...</div>}>
       <div className="w-full flex flex-row">
         <ToastContainer />
         <div className="w-1/5 bg-gray-200 h-screen">
@@ -485,8 +484,15 @@ const AdminSchedulePage = () => {
           </div>
         </div>
       </div>
-    </Suspense>
   );
 };
 
-export default AdminSchedulePage;
+const PageWrapper = () => {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <AdminSchedulePage />
+    </Suspense>
+  );
+}
+
+export default PageWrapper;
