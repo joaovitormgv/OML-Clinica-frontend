@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Select from "react-select";
 import { format } from "date-fns";
@@ -50,7 +50,7 @@ const AdminSchedulePage = () => {
   let showMenu = searchParams.get('showMenu') === 'true';
   console.log("Show menu:", showMenu);
 
-  if ( !showMenu ) {
+  if (!showMenu) {
     showMenu = false;
   }
 
@@ -275,215 +275,217 @@ const AdminSchedulePage = () => {
 
 
   return (
-    <div className="w-full flex flex-row">
-      <ToastContainer />
-      <div className="w-1/5 bg-gray-200 h-screen">
-        <div id="leftside-content" className="flex flex-col mt-10 text-black">
-          <p className="flex items-center justify-center font-bold text-xl">
-            Filtros
-          </p>
-          <form
-            id="filters"
-            className="font-semibold flex flex-col ml-5 mt-5 gap-4"
-            onSubmit={handleFilterSubmit}
-          >
-            <div>
-              <p>Data</p>
-              <div id="date-filter" className="flex flex-col ml-5 mt-2 gap-2">
-                <input
-                  type="date"
-                  name="data"
-                  onChange={handleInputDataChange}
-                  className="border-2 border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600 w-3/4"
-                />
-              </div>
-            </div>
-
-            <div>
-              <p>Médico</p>
-              <div id="doctor-filter" className="flex flex-col ml-5 mt-2 gap-2">
-                <Select
-                  name="medico"
-                  onChange={(selectedOption: SelectOption | null) => handleFilterChange(selectedOption, "medico")}
-                  options={[
-                    { value: 0, label: "Todos" },
-                    ...medicos.map((medico) => ({
-                      value: medico.id,
-                      label: medico.nome,
-                    })),
-                  ]}
-                  className="w-3/4"
-                />
-              </div>
-            </div>
-
-            <div>
-              <p>Paciente</p>
-              <div id="doctor-filter" className="flex flex-col ml-5 mt-2 gap-2">
-                <Select
-                  name="paciente"
-                  onChange={(selectedOption: SelectOption | null) => handleFilterChange(selectedOption, "paciente")}
-                  options={[
-                    { value: 0, label: "Todos" },
-                    ...pacientes.map((paciente) => ({
-                      value: paciente.id,
-                      label: paciente.nome,
-                    })),
-                  ]}
-                  className="w-3/4"
-                />
-              </div>
-            </div>
-            <button
-              className="bg-blue-700 text-white px-4 py-2 mr-5 rounded hover:bg-blue-600"
-              type="submit"
+    <Suspense fallback={<div>Carregando...</div>}>
+      <div className="w-full flex flex-row">
+        <ToastContainer />
+        <div className="w-1/5 bg-gray-200 h-screen">
+          <div id="leftside-content" className="flex flex-col mt-10 text-black">
+            <p className="flex items-center justify-center font-bold text-xl">
+              Filtros
+            </p>
+            <form
+              id="filters"
+              className="font-semibold flex flex-col ml-5 mt-5 gap-4"
+              onSubmit={handleFilterSubmit}
             >
-              Filtrar
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <div className="w-full flex flex-col items-center">
-
-        <div className="w-4/5 flex justify-between items-center mt-10">
-          <p className="text-2xl font-bold">Todas Consultas</p>
-          <button
-            onClick={() => setShowNewConsultationMenu((prev) => !prev)}
-            className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            + Nova Consulta
-          </button>
-        </div>
-
-        {/* Menu para adicionar nova consulta */}
-        {showNewConsultationMenu && (
-          <div className="w-4/5 bg-gray-100 p-4 rounded-lg mt-4 text-black">
-            <h2 className="text-lg font-semibold mb-4">
-              Adicionar Nova Consulta
-            </h2>
-            <form onSubmit={handleAddConsultation}>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-semibold">Nome do Paciente</label>
-                  <Select
-                    name="paciente"
-                    value={pacientes
-                      .filter(paciente => paciente.id === Number(newConsultationData.paciente.id))
-                      .map(paciente => ({ value: paciente.id, label: paciente.nome }))[0] || null}
-                    onChange={(selectedOption: SelectOption | null) => handleSelectChange(selectedOption, "paciente")}
-                    options={pacientes.map((paciente) => ({
-                      value: paciente.id,
-                      label: paciente.nome,
-                    }))}
-                    className="w-full"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold">Nome do Médico</label>
-                  <Select
-                    name="medico"
-                    value={medicos
-                      .filter(medico => medico.id === Number(newConsultationData.medico.id))
-                      .map(medico => ({ value: medico.id, label: medico.nome }))[0] || null}
-                    onChange={(selectedOption: SelectOption | null) => handleSelectChange(selectedOption, "medico")}
-                    options={medicos.map((medico) => ({
-                      value: medico.id,
-                      label: medico.nome,
-                    }))}
-                    className="w-full"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold">Data</label>
+              <div>
+                <p>Data</p>
+                <div id="date-filter" className="flex flex-col ml-5 mt-2 gap-2">
                   <input
                     type="date"
                     name="data"
-                    value={newConsultationData.data}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:border-blue-600"
+                    onChange={handleInputDataChange}
+                    className="border-2 border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600 w-3/4"
                   />
                 </div>
-                <div>
-                  <label className="block font-semibold">Horário</label>
-                  <select
-                    name="horario"
-                    value={newConsultationData.horario}
-                    onChange={handleHorarioChange}
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:border-blue-600"
-                  >
-                    {horariosDisponiveis.length === 0 ?
-                      <option value="">Sem vagas nessa data. Tente escolher outro médico ou outra data.</option> :
-                      <option value="">Selecione um horário</option>
-                    }
+              </div>
 
-                    {horariosDisponiveis.map((horario) => (
-                      <option key={horario} value={horario}>
-                        {horario}
-                      </option>
-                    ))}
-                  </select>
+              <div>
+                <p>Médico</p>
+                <div id="doctor-filter" className="flex flex-col ml-5 mt-2 gap-2">
+                  <Select
+                    name="medico"
+                    onChange={(selectedOption: SelectOption | null) => handleFilterChange(selectedOption, "medico")}
+                    options={[
+                      { value: 0, label: "Todos" },
+                      ...medicos.map((medico) => ({
+                        value: medico.id,
+                        label: medico.nome,
+                      })),
+                    ]}
+                    className="w-3/4"
+                  />
                 </div>
               </div>
-              <div className="flex justify-end mt-4">
-                <button
-                  type="submit"
-                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500"
-                >
-                  Adicionar
-                </button>
+
+              <div>
+                <p>Paciente</p>
+                <div id="doctor-filter" className="flex flex-col ml-5 mt-2 gap-2">
+                  <Select
+                    name="paciente"
+                    onChange={(selectedOption: SelectOption | null) => handleFilterChange(selectedOption, "paciente")}
+                    options={[
+                      { value: 0, label: "Todos" },
+                      ...pacientes.map((paciente) => ({
+                        value: paciente.id,
+                        label: paciente.nome,
+                      })),
+                    ]}
+                    className="w-3/4"
+                  />
+                </div>
               </div>
+              <button
+                className="bg-blue-700 text-white px-4 py-2 mr-5 rounded hover:bg-blue-600"
+                type="submit"
+              >
+                Filtrar
+              </button>
             </form>
           </div>
-        )}
+        </div>
 
-        {/* Mostrador das consultas, 2 por linha */}
-        <div className="w-4/5 grid grid-cols-2 gap-4 mt-6 mb-6 text-black">
-          {consultas.map((consultation, index) => {
-            const dataHora = new Date(consultation.dataHora);
-            const dataFormatada = format(dataHora, "dd/MM/yyyy");
-            return (
-              <div key={index} className="bg-gray-300 p-4 rounded-lg">
-                <p className="font-semibold">Médico: {medicos.find(medico => medico.id === consultation.medico.id)?.nome}</p>
-                <p className="font-semibold">Paciente: {pacientes.find(paciente => paciente.id === consultation.paciente.id)?.nome}</p>
-                <p className="text-sm">Data: {dataFormatada}</p>
-                <p className="text-sm">Horário: {consultation.horario}</p>
-                <div className="mt-2 flex space-x-2">
-                  <button
-                    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500"
-                    onClick={async () => {
-                      // tem certeza que deseja cancelar a consulta?
-                      const confirm = window.confirm("Tem certeza que deseja cancelar a consulta?");
-                      if (!confirm) return;
+        <div className="w-full flex flex-col items-center">
 
-                      try {
-                        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/consultas/${consultation.id}`, {
-                          method: "DELETE",
-                        });
-                        console.log("HTTP status:", response.status);
-                        if (response.ok) {
-                          toast.success("Consulta cancelada com sucesso");
-                          setConsultas((prevConsultas) => {
-                            const updatedConsultas = prevConsultas.filter((c) => c.dataHora !== consultation.dataHora);
-                            return updatedConsultas;
-                          });
-                        } else {
-                          toast.error("Erro ao cancelar consulta");
-                        }
-                      } catch (error) {
-                        console.error("Erro ao cancelar consulta:", error);
+          <div className="w-4/5 flex justify-between items-center mt-10">
+            <p className="text-2xl font-bold">Todas Consultas</p>
+            <button
+              onClick={() => setShowNewConsultationMenu((prev) => !prev)}
+              className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              + Nova Consulta
+            </button>
+          </div>
+
+          {/* Menu para adicionar nova consulta */}
+          {showNewConsultationMenu && (
+            <div className="w-4/5 bg-gray-100 p-4 rounded-lg mt-4 text-black">
+              <h2 className="text-lg font-semibold mb-4">
+                Adicionar Nova Consulta
+              </h2>
+              <form onSubmit={handleAddConsultation}>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block font-semibold">Nome do Paciente</label>
+                    <Select
+                      name="paciente"
+                      value={pacientes
+                        .filter(paciente => paciente.id === Number(newConsultationData.paciente.id))
+                        .map(paciente => ({ value: paciente.id, label: paciente.nome }))[0] || null}
+                      onChange={(selectedOption: SelectOption | null) => handleSelectChange(selectedOption, "paciente")}
+                      options={pacientes.map((paciente) => ({
+                        value: paciente.id,
+                        label: paciente.nome,
+                      }))}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-semibold">Nome do Médico</label>
+                    <Select
+                      name="medico"
+                      value={medicos
+                        .filter(medico => medico.id === Number(newConsultationData.medico.id))
+                        .map(medico => ({ value: medico.id, label: medico.nome }))[0] || null}
+                      onChange={(selectedOption: SelectOption | null) => handleSelectChange(selectedOption, "medico")}
+                      options={medicos.map((medico) => ({
+                        value: medico.id,
+                        label: medico.nome,
+                      }))}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-semibold">Data</label>
+                    <input
+                      type="date"
+                      name="data"
+                      value={newConsultationData.data}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:border-blue-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-semibold">Horário</label>
+                    <select
+                      name="horario"
+                      value={newConsultationData.horario}
+                      onChange={handleHorarioChange}
+                      className="w-full px-4 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:border-blue-600"
+                    >
+                      {horariosDisponiveis.length === 0 ?
+                        <option value="">Sem vagas nessa data. Tente escolher outro médico ou outra data.</option> :
+                        <option value="">Selecione um horário</option>
                       }
-                    }}
+
+                      {horariosDisponiveis.map((horario) => (
+                        <option key={horario} value={horario}>
+                          {horario}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="flex justify-end mt-4">
+                  <button
+                    type="submit"
+                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500"
                   >
-                    Cancelar
+                    Adicionar
                   </button>
                 </div>
-              </div>
-            );
-          })}
+              </form>
+            </div>
+          )}
+
+          {/* Mostrador das consultas, 2 por linha */}
+          <div className="w-4/5 grid grid-cols-2 gap-4 mt-6 mb-6 text-black">
+            {consultas.map((consultation, index) => {
+              const dataHora = new Date(consultation.dataHora);
+              const dataFormatada = format(dataHora, "dd/MM/yyyy");
+              return (
+                <div key={index} className="bg-gray-300 p-4 rounded-lg">
+                  <p className="font-semibold">Médico: {medicos.find(medico => medico.id === consultation.medico.id)?.nome}</p>
+                  <p className="font-semibold">Paciente: {pacientes.find(paciente => paciente.id === consultation.paciente.id)?.nome}</p>
+                  <p className="text-sm">Data: {dataFormatada}</p>
+                  <p className="text-sm">Horário: {consultation.horario}</p>
+                  <div className="mt-2 flex space-x-2">
+                    <button
+                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500"
+                      onClick={async () => {
+                        // tem certeza que deseja cancelar a consulta?
+                        const confirm = window.confirm("Tem certeza que deseja cancelar a consulta?");
+                        if (!confirm) return;
+
+                        try {
+                          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/consultas/${consultation.id}`, {
+                            method: "DELETE",
+                          });
+                          console.log("HTTP status:", response.status);
+                          if (response.ok) {
+                            toast.success("Consulta cancelada com sucesso");
+                            setConsultas((prevConsultas) => {
+                              const updatedConsultas = prevConsultas.filter((c) => c.dataHora !== consultation.dataHora);
+                              return updatedConsultas;
+                            });
+                          } else {
+                            toast.error("Erro ao cancelar consulta");
+                          }
+                        } catch (error) {
+                          console.error("Erro ao cancelar consulta:", error);
+                        }
+                      }}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
-    </div>
+    </Suspense>
   );
 };
 
